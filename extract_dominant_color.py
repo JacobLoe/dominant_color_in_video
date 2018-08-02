@@ -129,13 +129,7 @@ def fn_rgb_to_color():
 parser = argparse.ArgumentParser()
 parser.add_argument("path",help="the path to the videofile")
 parser.add_argument("skip_frames",help="skip every n-th frame in the videofile",type=int)
-#scale to width, give width return 16:9 resolution || done
-#document performance in .md or wiki
 #get advene to work, get .py-file in advene, (feature_detect, hpi, plugins folder)
-#bins normalize || done
-#df.tail(k) as return, default 5, if less bins filled than specified return all filled || done 
-#threshold for bins as arguments, default 5 || done
-#precision recall, for movie, with json-file,
 parser.add_argument("resolution_width",help="set the resolution width of the videofile, the resolution scales automatically to 16:9")
 parser.add_argument("bin_threshold",help="set the percentage a color has to reach to be returned")
 parser.add_argument("colors_to_return",help="set how many colors should be returned at maximum")
