@@ -32,24 +32,21 @@ def read_video(video,skip_frames,resolution):
     cv2.destroyAllWindows()
     return frames
 ###############################################
-def extract_dominant_color(frame_list,rgb_to_color):
+def extract_dominant_color(frame_list,bin_threshold=0.05,colors_to_return=5):
+    print(str(len(frame_list))+' frames to process.')
     start=time.time()
-    #bins dict for histograms
-    bins={}
-    rgb_list=[]
-    #init the dict with zeros for every key
-    for rgb in rgb_to_color:
+    rgb_to_color=fn_rgb_to_color() #get the color dict 
+    bins={} #bins dict for histograms 
+    for rgb in rgb_to_color: #init the dict with zeros for every key
         bins[rgb_to_color[rgb]]=0
-    #map the values of the dict to a list
-    for rgb in rgb_to_color:
+    rgb_list=[] #create a traverseable list of the rgb_values
+    for rgb in rgb_to_color: #map the values of the dict to a list
         rgb_list.append(rgb)
     i = 0
-    for image in frame_list:
+    for image in frame_list: #traverse the video
         #flatten the image to 1d 
         img = image.reshape((image.shape[0] * image.shape[1], 3))     
-
-        #nearest neighbour search
-        for pixel in img:
+        for pixel in img: # do nearest neighbour search on every pixel every color in the list
             bin_aux=[]
             #get the euclidean distance between the colors and the current pixel
             for rgb in rgb_list:
@@ -61,11 +58,15 @@ def extract_dominant_color(frame_list,rgb_to_color):
         i+=1
         end=time.time()
         print('Finished '+str(i)+',time: '+str(end-start))
-    #create a dataframe, sorted by count and return it
+    #create a dataframe, sorted descending by count
     bins_sorted=sorted(zip(list(bins.values()),list(bins.keys())),reverse=True)
     df=pd.DataFrame(bins_sorted,columns=['count','color'])
     df.set_index('color',inplace=True) #set the colors as the index of the dataframe
-    return df
+    norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1]  #normalize the bins
+    df=df/norm_factor 
+    df = df[df>bin_threshold].dropna() #kick bins from the dataframe with precentage lower than bin_threshold 
+    return df.head(colors_to_return)#return the color_return highest bins, default 5, if less bins then
+                                #color_return are there return all
 ###################################################
 #
 def fn_rgb_to_color():
@@ -124,12 +125,22 @@ def fn_rgb_to_color():
 ## main
 ##############################################
 
+#arguments for command line
 parser = argparse.ArgumentParser()
 parser.add_argument("path",help="the path to the videofile")
 parser.add_argument("skip_frames",help="skip every n-th frame in the videofile",type=int)
-parser.add_argument("resolution",help="set the resolution of the videofile, '1':(120,90),'2':(240,135),'3':(480,270)")
+#scale to width, give width return 16:9 resolution || done
+#document performance in .md or wiki
+#get advene to work, get .py-file in advene, (feature_detect, hpi, plugins folder)
+#bins normalize || done
+#df.tail(k) as return, default 5, if less bins filled than specified return all filled || done 
+#threshold for bins as arguments, default 5 || done
+#precision recall, for movie, with json-file,
+parser.add_argument("resolution_width",help="set the resolution width of the videofile, the resolution scales automatically to 16:9")
+parser.add_argument("bin_threshold",help="set the percentage a color has to reach to be returned")
+parser.add_argument("colors_to_return",help="set how many colors should be returned at maximum")
 args=parser.parse_args()
 
-frame_list = read_video(args.path,args.skip_frames,args.resolution)
-df = extract_dominant_color(frame_list,fn_rgb_to_color())
+frame_list = read_video(args.path,args.skip_frames,args.resolution_width)
+df = extract_dominant_color(frame_list,args.bin_threshold,args.colors_to_return)
 print(df)
