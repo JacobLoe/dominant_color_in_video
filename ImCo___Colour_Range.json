@@ -1,0 +1,714 @@
+{ "annotations": [
+
+                {
+                        "id": "a6351",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1080940,
+                        "end": 1100660,
+                        "content": "white, black, sandybrown, lightgrey, dimgrey, antiquewhite"
+                },
+
+                {
+                        "id": "a6352",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1100660,
+                        "end": 1106500,
+                        "content": "antiquewhite, black, white, skin, sandybrown,lightgrey, tomato"
+                },
+
+                {
+                        "id": "a6353",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1106500,
+                        "end": 1114500,
+                        "content": "white, lightgrey, black, skin, skyblue"
+                },
+
+                {
+                        "id": "a6354",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1114500,
+                        "end": 1120980,
+                        "content": "ivory, black, lightgrey, white, skin, skyblue"
+                },
+
+                {
+                        "id": "a6355",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1120980,
+                        "end": 1122380,
+                        "content": "ivory, skyblue, skin, saddlebrown, yellow"
+                },
+
+                {
+                        "id": "a6356",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1122380,
+                        "end": 1123420,
+                        "content": "ivory, black, lightgrey, white, skin"
+                },
+
+                {
+                        "id": "a6357",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1123420,
+                        "end": 1124660,
+                        "content": "ivory, skyblue, skin"
+                },
+
+                {
+                        "id": "a6358",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1124660,
+                        "end": 1126820,
+                        "content": "ivory, dimgrey, lightgrey, black, white, skin, skyblue"
+                },
+
+                {
+                        "id": "a6359",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1126820,
+                        "end": 1128540,
+                        "content": "ivory, black, lightgrey, white, skin"
+                },
+
+                {
+                        "id": "a6360",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1128540,
+                        "end": 1130340,
+                        "content": "ivory, skyblue, skin, saddlebrown, yellow"
+                },
+
+                {
+                        "id": "a6361",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1130340,
+                        "end": 1132140,
+                        "content": "ivory, dimgrey, lightgrey, black, white, skin, skyblue"
+                },
+
+                {
+                        "id": "a6362",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1132140,
+                        "end": 1134380,
+                        "content": "ivory, dimgrey, lightgrey, black, skin, skyblue, darkred"
+                },
+
+                {
+                        "id": "a6363",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1134380,
+                        "end": 1138980,
+                        "content": "black, skin, ivory, sandybrown, dimgrey, white"
+                },
+
+                {
+                        "id": "a6364",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1138980,
+                        "end": 1141980,
+                        "content": "black, dimgrey, ivory, steelblue, skin, white"
+                },
+
+                {
+                        "id": "a6365",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1141980,
+                        "end": 1145220,
+                        "content": "black, skin, ivory, lightgrey, gold"
+                },
+
+                {
+                        "id": "a6366",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1145220,
+                        "end": 1147900,
+                        "content": "black, skin, ivory, sandybrown, dimgrey, white"
+                },
+
+                {
+                        "id": "a6367",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1147900,
+                        "end": 1152620,
+                        "content": "black, skin, ivory, white, antiquewhite, gold, darkred"
+                },
+
+                {
+                        "id": "a6368",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1152620,
+                        "end": 1154980,
+                        "content": "black, darkblue, skin, ivory, dimgrey, darkred, white, sandybrown"
+                },
+
+                {
+                        "id": "a6369",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1154980,
+                        "end": 1156260,
+                        "content": "black, skin, ivory, white, antiquewhite, gold, darkred"
+                },
+
+                {
+                        "id": "a6370",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1156260,
+                        "end": 1158900,
+                        "content": "black, skin, ivory, sandybrown, dimgrey, white"
+                },
+
+                {
+                        "id": "a6371",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1158900,
+                        "end": 1160260,
+                        "content": "black, ivory, grey, skin, saddlebrown, darkblue, white"
+                },
+
+                {
+                        "id": "a6372",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1160260,
+                        "end": 1161980,
+                        "content": "black, darkblue, skin, ivory, dimgrey, darkred, white, sandybrown"
+                },
+
+                {
+                        "id": "a6373",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1161980,
+                        "end": 1163460,
+                        "content": "black, grey, dimgrey, ivory, skin, sandybrown, saddlebrown, white, darkred"
+                },
+
+                {
+                        "id": "a6374",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1163460,
+                        "end": 1164460,
+                        "content": "black, skin, ivory, white, antiquewhite, darkred"
+                },
+
+                {
+                        "id": "a6375",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1164460,
+                        "end": 1166460,
+                        "content": "black, dimgrey, ivory, steelblue, skin, white, darkred"
+                },
+
+                {
+                        "id": "a6376",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1166460,
+                        "end": 1168020,
+                        "content": "black, dimgrey, ivory, skin, white, darkred"
+                },
+
+                {
+                        "id": "a6377",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1168020,
+                        "end": 1168940,
+                        "content": "black, ivory, grey, skin, saddlebrown, darkblue, white"
+                },
+
+                {
+                        "id": "a6378",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1168940,
+                        "end": 1169940,
+                        "content": "black, skin, ivory, sandybrown, dimgrey, white"
+                },
+
+                {
+                        "id": "a6379",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1169940,
+                        "end": 1171500,
+                        "content": "black, ivory, skin, white, antiquewhite, darkred"
+                },
+
+                {
+                        "id": "a6380",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1171500,
+                        "end": 1173700,
+                        "content": "black, grey, dimgrey, ivory, skin, sandybrown, white, darkred"
+                },
+
+                {
+                        "id": "a6381",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1173700,
+                        "end": 1178380,
+                        "content": "black, ivory, grey, skin, white, antiquewhite, gold"
+                },
+
+                {
+                        "id": "a6382",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1178380,
+                        "end": 1180940,
+                        "content": "black, ivory, saddlebrown, darkblue, steelblue, skin, white"
+                },
+
+                {
+                        "id": "a6383",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1180940,
+                        "end": 1182140,
+                        "content": "black, dimgrey, ivory, skin, saddlebrown, sandybrown, steelblue, white"
+                },
+
+                {
+                        "id": "a6384",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1182140,
+                        "end": 1183700,
+                        "content": "black, skin, ivory, sandybrown, dimgrey, steelblue, white"
+                },
+
+                {
+                        "id": "a6385",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1183700,
+                        "end": 1184780,
+                        "content": "black, skin, ivory, lightgrey, gold"
+                },
+
+                {
+                        "id": "a6386",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1184780,
+                        "end": 1186580,
+                        "content": "black, dimgrey, ivory, skin, saddlebrown, sandybrown, steelblue, white"
+                },
+
+                {
+                        "id": "a6387",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1186580,
+                        "end": 1187820,
+                        "content": "black, skin, ivory, sandybrown, dimgrey, white"
+                },
+
+                {
+                        "id": "a6388",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1187820,
+                        "end": 1189180,
+                        "content": "black, skin, ivory, white, grey, antiquewhite, darkred, gold"
+                },
+
+                {
+                        "id": "a6389",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1189180,
+                        "end": 1190140,
+                        "content": "black, skin, ivory, sandybrown, dimgrey, white"
+                },
+
+                {
+                        "id": "a6390",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1190140,
+                        "end": 1192100,
+                        "content": "black, skin, ivory, white, darkred, gold"
+                },
+
+                {
+                        "id": "a6391",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1192100,
+                        "end": 1193660,
+                        "content": "darkblue, black, skin, ivory, sandybrown, dimgrey, white"
+                },
+
+                {
+                        "id": "a6392",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1193660,
+                        "end": 1194540,
+                        "content": "black, dimgrey, ivory, skin, saddlebrown, sandybrown, steelblue, white"
+                },
+
+                {
+                        "id": "a6393",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1194540,
+                        "end": 1195460,
+                        "content": "black, dimgrey, ivory, grey, skin, sandybrown, darkblue, darkred, white"
+                },
+
+                {
+                        "id": "a6394",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1195460,
+                        "end": 1197180,
+                        "content": "black, darkblue, skin, ivory, white, grey, gold"
+                },
+
+                {
+                        "id": "a6395",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1197180,
+                        "end": 1199500,
+                        "content": "black, darkblue, steelblue, skin, saddlebrown, ivory, sandybrown, white"
+                },
+
+                {
+                        "id": "a6396",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1199500,
+                        "end": 1200780,
+                        "content": "black, darkblue, skin, ivory, white, grey, gold"
+                },
+
+                {
+                        "id": "a6397",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1200780,
+                        "end": 1214460,
+                        "content": "lightgrey, ivory, black, white, skin, tomato"
+                },
+
+                {
+                        "id": "a6398",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1214460,
+                        "end": 1219780,
+                        "content": "black, skin, skyblue, ivory, white, tomato"
+                },
+
+                {
+                        "id": "a6399",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1219780,
+                        "end": 1221500,
+                        "content": "white, black, ivory, saddlebrown, dimgrey, skin"
+                },
+
+                {
+                        "id": "a6400",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1221500,
+                        "end": 1226100,
+                        "content": "black, skin, skyblue, ivory, white, tomato"
+                },
+
+                {
+                        "id": "a6401",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1226100,
+                        "end": 1229940,
+                        "content": "white, black, skin, grey"
+                },
+
+                {
+                        "id": "a6402",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1229940,
+                        "end": 1233420,
+                        "content": "dimgrey, skin, ivory, black, grey, white, saddlebrown"
+                },
+
+                {
+                        "id": "a6403",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1233420,
+                        "end": 1236100,
+                        "content": "white, black, skin, grey"
+                },
+
+                {
+                        "id": "a6404",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1236100,
+                        "end": 1239180,
+                        "content": "black, skin, skyblue, ivory, white, tomato"
+                },
+
+                {
+                        "id": "a6405",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1239180,
+                        "end": 1241260,
+                        "content": "white, black, ivory, saddlebrown, dimgrey, skin"
+                },
+
+                {
+                        "id": "a6406",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1241260,
+                        "end": 1243420,
+                        "content": "ivory, skin, skyblue, sandybrown, black"
+                },
+
+                {
+                        "id": "a6407",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1243420,
+                        "end": 1245020,
+                        "content": "ivory, lightgrey, steelblue, skin"
+                },
+
+                {
+                        "id": "a6408",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1245020,
+                        "end": 1246700,
+                        "content": "ivory, skin, skyblue, sandybrown, black, white"
+                },
+
+                {
+                        "id": "a6409",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1246700,
+                        "end": 1252580,
+                        "content": "ivory, lightgrey, steelblue, skin, black, white"
+                },
+
+                {
+                        "id": "a6410",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1252580,
+                        "end": 1256860,
+                        "content": "ivory, skin, skyblue, sandybrown, black, white"
+                },
+
+                {
+                        "id": "a6411",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1256860,
+                        "end": 1258220,
+                        "content": "ivory, lightgrey, black, white, skyblue, skin, grey"
+                },
+
+                {
+                        "id": "a6412",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1258220,
+                        "end": 1259500,
+                        "content": "ivory, lightgrey, black, white, skyblue, skin"
+                },
+
+                {
+                        "id": "a6414",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1259500,
+                        "end": 1261060,
+                        "content": "ivory, lightgrey, skin, skyblue, steelblue, lightgrey, black, white"
+                },
+
+                {
+                        "id": "a6415",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1261060,
+                        "end": 1263660,
+                        "content": "ivory, black, skyblue, skin, grey, white"
+                },
+
+                {
+                        "id": "a6416",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1263660,
+                        "end": 1267300,
+                        "content": "ivory, black, skyblue, skin, grey, white, crimson"
+                },
+
+                {
+                        "id": "a6417",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1267300,
+                        "end": 1268620,
+                        "content": "ivory, black, skyblue, skin, white"
+                },
+
+                {
+                        "id": "a6418",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1268620,
+                        "end": 1271860,
+                        "content": "ivory, lightgrey, black, skyblue, skin, sandybrown, white, crimson"
+                },
+
+                {
+                        "id": "a6419",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1271860,
+                        "end": 1272980,
+                        "content": "ivory, black, skyblue, skin, white"
+                },
+
+                {
+                        "id": "a6420",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1272980,
+                        "end": 1274180,
+                        "content": "ivory, skyblue, skin, sandybrown"
+                },
+
+                {
+                        "id": "a6421",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1274180,
+                        "end": 1274860,
+                        "content": "ivory, black, skyblue, skin, white"
+                },
+
+                {
+                        "id": "a6422",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1274860,
+                        "end": 1278180,
+                        "content": "ivory, black, skyblue, skin, sandybrown, white"
+                },
+
+                {
+                        "id": "a6423",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1278180,
+                        "end": 1283140,
+                        "content": "ivory, black, white, skin"
+                },
+
+                {
+                        "id": "a6424",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1283140,
+                        "end": 1287620,
+                        "content": "ivory, skyblue, skin, black"
+                },
+
+                {
+                        "id": "a6425",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1287620,
+                        "end": 1294940,
+                        "content": "ivory, black, skyblue, skin, white, yellow"
+                },
+
+                {
+                        "id": "a6426",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1294940,
+                        "end": 1299900,
+                        "content": "ivory, skyblue, skin, black"
+                },
+
+                {
+                        "id": "a6427",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1299900,
+                        "end": 1307860,
+                        "content": "ivory, black, white, skin"
+                },
+
+                {
+                        "id": "a6428",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1307860,
+                        "end": 1311740,
+                        "content": "ivory, skyblue, skin, black"
+                },
+
+                {
+                        "id": "a6429",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1311740,
+                        "end": 1315820,
+                        "content": "ivory, black, white, skin"
+                },
+
+                {
+                        "id": "a6430",
+                        "type": "ColourRange",
+                        "media": "/home/ada/Desktop/AdA-data/azp/feature_film/Company_Men/Wells_John_CompanyMen_full.mp4",
+                        "begin": 1315820,
+                        "end": 1320820,
+                        "content": "ivory, black, white, skyblue, skin, white"
+                }
+
+] }
