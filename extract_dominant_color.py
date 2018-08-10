@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import euclidean
+from sklearn.neighbors import KDTree
 import time
 import argparse
 import json
@@ -47,18 +48,23 @@ def extract_dominant_color(frame_list,bin_threshold=0.05,colors_to_return=5):
     for rgb in rgb_to_color: #map the values of the dict to a list
         rgb_list.append(rgb)
     i = 0
+
+    kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')  
     for image in frame_list: #traverse the video
         #flatten the image to 1d 
         img = image.reshape((image.shape[0] * image.shape[1], 3))     
-        for pixel in img: # do nearest neighbour search on every pixel every color in the list
-            bin_aux=[]
-            #get the euclidean distance between the colors and the current pixel
-            for rgb in rgb_list:
-                bin_aux.append(euclidean(pixel,rgb))
-            # get the index of the color,which has the smallest distance, in rgb_list
-            min_pos = np.argmin(bin_aux)
-            #increment the respective color 
-            bins[rgb_to_color[rgb_list[min_pos]]]+=1
+        nns = kdt.query(img, k=1, return_distance=False)
+        for nn in nns:
+            bins[rgb_to_color[rgb_list[nn[0]]]]+=1
+#        for pixel in img: # do nearest neighbour search on every pixel every color in the list
+#            bin_aux=[]
+#            #get the euclidean distance between the colors and the current pixel
+#            for rgb in rgb_list:
+#                bin_aux.append(euclidean(pixel,rgb))
+#            # get the index of the color,which has the smallest distance, in rgb_list
+#            min_pos = np.argmin(bin_aux)
+#            #increment the respective color 
+#            bins[rgb_to_color[rgb_list[min_pos]]]+=1
         i+=1
         end=time.time()
         print('Finished '+str(i)+',time: '+str(end-start))
@@ -148,14 +154,18 @@ with open(args.json_path) as file:
     file.close()
 # extract the start and end of the timestamps and enter them in a list 
 gt_e_s_list =[]
-for content in ground_truth['annotations']:
+
+for i,content in enumerate(ground_truth['annotations']):
+    print ("{0}/{1}".format(i+1, len(ground_truth['annotations'])))
     gt_e_s=[]
     gt_e_s.append(round(content['begin']/1000*25))
     gt_e_s.append(round(content['end']/1000*25))
     gt_e_s_list.append(gt_e_s)
+
 #add all segments to a list
 segment_list=[]
-for gt_i in gt_e_s_list:
+for i,gt_i in enumerate(gt_e_s_list):
+    print ("{0}/{1}".format(i+1, len(gt_e_s_list)))
     segment_list.append(read_video_segments(args.video_path,
                     gt_i[0],gt_i[1],args.resolution_width))
 #extract dominant colors for each segment
@@ -166,7 +176,7 @@ for segment in segment_list:
 #write the predictions to a dict and then to a .json-file
 predictions=ground_truth
 for i,segment in enumerate(predictions['annotations']):
-    predictions['content']=dominant_colors_list[i].index.tolist()
+    segment['content']=dominant_colors_list[i].index.tolist()
 predictions_json=json.dumps(predictions)
 with open('predictions.json','w') as json_file:
     json_file.write(predictions_json)
