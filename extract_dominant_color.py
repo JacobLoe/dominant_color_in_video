@@ -14,7 +14,7 @@ import json
 #####################################################
 #read video file frame by frame, beginning and ending with a timestamp
 def read_video_segments(video,start_frame,end_frame,resolution_width):
-    resolution_height=round(int(resolution_width * 9/16))
+    resolution_height=int(round(resolution_width * 9/16))
     resolution=(resolution_width,resolution_height)
     vid = cv2.VideoCapture(video)
     frames=[]
