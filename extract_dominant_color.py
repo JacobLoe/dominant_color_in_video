@@ -162,7 +162,7 @@ for gt_i in gt_e_s_list:
 dominant_colors_list=[]
 for segment in segment_list:
     dominant_colors_list.append(extract_dominant_color(segment,
-		args.bin_threshold,args.colors_to_return)
+		args.bin_threshold,args.colors_to_return))
 #write the predictions to a dict and then to a .json-file
 predictions=ground_truth
 for i,segment in enumerate(predictions['annotations']):
