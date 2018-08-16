@@ -125,46 +125,49 @@ def fn_rgb_to_color():
 	#purple4 is median purple
 	#skin is caucasian 
 	return rgb_to_color
-
 if __name__ == "__main__":
-	##############################################
-	## command line arguments
-	##############################################
-	#arguments for command line
-	parser = argparse.ArgumentParser()
-	parser.add_argument("video_path",help="the path to the videofile")
-	parser.add_argument("azp_path",help="the path to the azp-file")
-	parser.add_argument("resolution_width",type=int,help="set the resolution width of the videofile, the resolution scales automatically to 16:9")
-	parser.add_argument("bin_threshold",type=float,help="set the percentage (0-100) a color has to reach to be returned,default 5")
-	parser.add_argument("colors_to_return",type=int,help="set how many colors should be returned at maximum,default 5")
-	args=parser.parse_args()
-	##############################################
-	## main
-	##############################################
-	#extract the .azp-file	
-	zip_ref = zipfile.ZipFile(args.azp_path)
-	zip_ref.extractall('zip')
-	#read the .xml-file
-	tree = ET.parse('zip/content.xml')
-	root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
-	#traverse the .xml-file
-	for child in root[0].iter():
-	    #whenever a shot annotation is found, start color extraction 
-	    if child.get('type')=='#Shot':
-		dominant_colors_list=[]
-		for child2 in child:
-		    if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
-		        begin=int(child2.get('begin'))/1000*25
-		        end=int(child2.get('end'))/1000*25
-			segment = read_video_segments(args.video_path,
-				begin,end,
-				args.resolution_width)
-			dominant_colors_list.append(begin,
-					end,
-					extract_dominant_colors(
-					segment,
-					args.bin_threshold,
-					args.colors_to_return))
-
-
-	print('done')
+        ##############################################
+        ## command line arguments
+        ##############################################
+        #arguments for command line
+        parser = argparse.ArgumentParser()
+        parser.add_argument("video_path",help="the path to the videofile")
+        parser.add_argument("azp_path",help="the path to the azp-file")
+        parser.add_argument("output_path",help="the path for the output .txt-file containing the colors")
+        parser.add_argument("resolution_width",type=int,help="set the resolution width of the videofile, the resolution scales automatically to 16:9")
+        parser.add_argument("bin_threshold",type=float,help="set the percentage (0-100) a color has to reach to be returned,default 5")
+        parser.add_argument("colors_to_return",type=int,help="set how many colors should be returned at maximum,default 5")
+        args=parser.parse_args()
+        ##############################################
+        ## main
+        ##############################################
+        #extract the .azp-file	
+        zip_ref = zipfile.ZipFile(args.azp_path)
+        zip_ref.extractall('zip')
+        #read the .xml-file
+        tree = ET.parse('zip/content.xml')
+        root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
+        #traverse the .xml-file
+        #with open('dominant_colors.txt','w') as file:
+        with open(args.output_path,'w') as file:
+             #trigger=False
+             for child in root[0].iter():
+                 #whenever a shot annotation is found, start color extraction
+                 if child.get('type')=='#Shot':
+                    dominant_colors_list=[]
+                    for child2 in child:
+                        if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
+                           end=int(child2.get('end'))/1000*25
+                           begin=int(child2.get('begin'))/1000*25
+                           segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
+                           colors_df = extract_dominant_colors(segment,args.bin_threshold,args.colors_to_return)
+                           colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
+                           print(begin,end,colors_list)
+                           file.write((begin,end,colors_list)+'\n')
+                 #just for test purposes
+                 #   trigger=True
+                 #if trigger:
+                 #   print(trigger)
+                 #   break
+             file.close()
+        print('done')
