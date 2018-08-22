@@ -73,58 +73,71 @@ def bins_to_df(bins,bin_threshold=5,colors_to_return=5):
     return df.head(colors_to_return)#return the color_return highest bins, default 5, if less bins then
                                     #color_return are there return all
 #####################################################
-def fn_rgb_to_color():
-	colors={'darkred':(139,0,0),
-	'firebrick':(178,34,34),
-	'crimson':(220,20,60),
-	'red':(255,0,0),
-	'tomato':(255,99,71),
-	'salmon':(250,128,114),
-	'darkorange':(255,140,0),
-	'gold':(255,215,0),
-	'darkkhaki':(189,183,107),
-	'yellow':(255,255,0),
-	'darkolivegreen':(85,107,47),
-	'olivedrab':(107,142,35),
-	'greenyellow':(173,255,47),
-	'darkgreen':(0,100,0),
-	'aquamarine':(127,255,212),
-	'steelblue':(70,130,180),
-	'skyblue':(135,206,235),
-	'darkblue':(0,0,139),
-	'blue':(0,0,255),
-	'royalblue':(65,105,225),
-	'purple':(128,0,128),
-	'violet':(238,130,238),
-	'deeppink':(255,20,147),
-	'pink':(255,192,203),
-	'antiquewhite':(250,235,215),
-	'saddlebrown':(139,69,19),
-	'sandybrown':(244,164,96),
-	'ivory':(255,255,240),
-	'dimgrey':(105,105,105),
-	'grey':(28,128,128),
-	'silver':(192,192,192),
-	'lightgrey':(211,211,211),
-	'black':(0,0,0),
-	'white':(255,255,255),
-	'darkcyan':(0,139,139),
-	'cyan':(0,255,255),
-	'green':(0,128,0),
-	'khaki':(240,230,140),
-	'goldenrod':(218,165,32),
-	'orange':(255,165,0),
-	'coral':(255,127,80),
-	'magenta':(255,0,255),
-	'wheat':(245,222,179),
-	'skin':(255,224,189),
-	'purple4':(147,112,219)}
-	rgb_to_color={}
-	for color in colors:
-	    rgb_to_color[colors[color]]=color
-	#purple4 is median purple
-	#skin is caucasian 
-	return rgb_to_color
+def fn_rgb_to_color(*path):
+    if path:
+        path=str(path)[2:-3] #to get rid of the of the *args things
+        rgb_to_color = {}
+        with open(path) as f:
+            for line in f:
+                #split lines at "::
+                color, rgb = line.strip().split(':')
+                #strip the rgb-string of the parenthesis, split it up a the commas,
+                #cast them to int and put them into a tuples
+                rgb_value=tuple(map(int,(rgb.strip('(').strip(')').split(','))))
+                rgb_to_color[rgb_value] = color
+    else:
+        print('dfd')
+        colors={'darkred':(139,0,0),
+        'firebrick':(178,34,34),
+        'crimson':(220,20,60),
+        'red':(255,0,0),
+        'tomato':(255,99,71),
+        'salmon':(250,128,114),
+        'darkorange':(255,140,0),
+        'gold':(255,215,0),
+        'darkkhaki':(189,183,107),
+        'yellow':(255,255,0),
+        'darkolivegreen':(85,107,47),
+        'olivedrab':(107,142,35),
+        'greenyellow':(173,255,47),
+        'darkgreen':(0,100,0),
+        'aquamarine':(127,255,212),
+        'steelblue':(70,130,180),
+        'skyblue':(135,206,235),
+        'darkblue':(0,0,139),
+        'blue':(0,0,255),
+        'royalblue':(65,105,225),
+        'purple':(128,0,128),
+        'violet':(238,130,238),
+        'deeppink':(255,20,147),
+        'pink':(255,192,203),
+        'antiquewhite':(250,235,215),
+        'saddlebrown':(139,69,19),
+        'sandybrown':(244,164,96),
+        'ivory':(255,255,240),
+        'dimgrey':(105,105,105),
+        'grey':(28,128,128),
+        'silver':(192,192,192),
+        'lightgrey':(211,211,211),
+        'black':(0,0,0),
+        'white':(255,255,255),
+        'darkcyan':(0,139,139),
+        'cyan':(0,255,255),
+        'green':(0,128,0),
+        'khaki':(240,230,140),
+        'goldenrod':(218,165,32),
+        'orange':(255,165,0),
+        'coral':(255,127,80),
+        'magenta':(255,0,255),
+        'wheat':(245,222,179),
+        'skin':(255,224,189),
+        'purple4':(147,112,219)}
+        rgb_to_color={}
+        for color in colors:
+            rgb_to_color[colors[color]]=color
+        #purple4 is median purple
+        #skin is caucasian
+    return rgb_to_color
 if __name__ == "__main__":
         ##############################################
         ## command line arguments
@@ -133,10 +146,12 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("video_path",help="the path to the videofile")
         parser.add_argument("azp_path",help="the path to the azp-file")
-        parser.add_argument("output_path",help="the path for the output .txt-file containing the colors")
+        parser.add_argument("output_path",help="the path for the output .txt-file containing the dominant colors, has to include the filename as a .txt-file")
         parser.add_argument("resolution_width",type=int,help="set the resolution width of the videofile, the resolution scales automatically to 16:9")
-        parser.add_argument("bin_threshold",type=float,help="set the percentage (0-100) a color has to reach to be returned,default 5")
-        parser.add_argument("colors_to_return",type=int,help="set how many colors should be returned at maximum,default 5")
+        parser.add_argument("bin_threshold",type=float,nargs='?',default=5, help="optional, set the percentage (0-100) a color has to reach to be returned,default 5")
+        parser.add_argument("colors_to_return",type=int,nargs='?',default=5, help="optional, set how many colors should be returned at maximum,default 5")
+        parser.add_argument("colors_txt",nargs='?', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc'")
+        parser.add_argument("what_to_process",nargs='?',default='segment',help="decide if the dominant colors should be processed per segment or a whole scene, default is segment, switch to scene with 'scene'")
         args=parser.parse_args()
         ##############################################
         ## main
@@ -150,7 +165,8 @@ if __name__ == "__main__":
         #traverse the .xml-file
         #with open('dominant_colors.txt','w') as file:
         with open(args.output_path,'w') as file:
-             #trigger=False
+             if args.what_to_process=='scene':
+                frame_list=[]
              for child in root[0].iter():
                  #whenever a shot annotation is found, start color extraction
                  if child.get('type')=='#Shot':
@@ -159,15 +175,18 @@ if __name__ == "__main__":
                         if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
                            end=int(child2.get('end'))/1000*25
                            begin=int(child2.get('begin'))/1000*25
-                           segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
-                           colors_df = extract_dominant_colors(segment,args.bin_threshold,args.colors_to_return)
-                           colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
-                           print(begin,end,colors_list)
-                           file.write((begin,end,colors_list)+'\n')
-                 #just for test purposes
-                 #   trigger=True
-                 #if trigger:
-                 #   print(trigger)
-                 #   break
+                           if args.what_to_process=='scene':
+                              frame_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
+                           if args.what_to_process=='segment':
+                              segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
+                              colors_df = extract_dominant_colors(segment,args.bin_threshold,args.colors_to_return)
+                              colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
+                              print(begin,end,colors_list)
+                              file.write((begin,end,colors_list)+'\n')
+             if args.what_to_process=='scene':
+                colors_df = extract_dominant_colors(frame_list,args.bin_threshold,args.colors_to_return)
+                colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
+                print(begin,end,colors_list)
+                file.write((begin,end,colors_list)+'\n')
              file.close()
         print('done')
