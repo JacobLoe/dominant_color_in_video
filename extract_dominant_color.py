@@ -14,25 +14,28 @@ import xml.etree.ElementTree as ET
 ## methods
 #####################################################
 #read video file frame by frame, beginning and ending with a timestamp
-def read_video_segments(video,start_frame,end_frame,resolution_width):
+def read_video_segments(video,start_frame,end_frame,resolution_width=200):
     resolution_height=int(round(resolution_width * 9/16))
     resolution=(resolution_width,resolution_height)
     vid = cv2.VideoCapture(video)
     frames=[]
     vid_length=0
-    while(vid.isOpened()):
-        # Capture frame-by-frame
-        ret, frame = vid.read() # if ret is false, frame has no content
-        if not ret:
-            break
-        # skip every "skip_frame"
-        if vid_length>=start_frame:
-            # resize the video to a different resolution
-            frame=cv2.resize(frame,resolution)
-            frames.append(frame) #add the individual frames to a list
-        if vid_length==end_frame:
-            break
-        vid_length+=1 #increase the vid_length counter
+    with tqdm(total=end_frame-start_frame) as pbar: #init the progressbar,with max lenght of the given segment
+        while(vid.isOpened()):
+            # Capture frame-by-frame
+            ret, frame = vid.read() # if ret is false, frame has no content
+            if not ret:
+                break
+            # skip every "skip_frame"
+            if vid_length>=start_frame:
+                # resize the video to a different resolution
+                frame=cv2.resize(frame,resolution)
+                frames.append(frame) #add the individual frames to a list
+                pbar.update() #update the progressbar
+            if vid_length==end_frame:
+                pbar.update()
+                break
+            vid_length+=1 #increase the vid_length counter
     vid.release()
     cv2.destroyAllWindows()
     return frames
@@ -86,7 +89,6 @@ def fn_rgb_to_color(*path):
                 rgb_value=tuple(map(int,(rgb.strip('(').strip(')').split(','))))
                 rgb_to_color[rgb_value] = color
     else:
-        print('dfd')
         colors={'darkred':(139,0,0),
         'firebrick':(178,34,34),
         'crimson':(220,20,60),
@@ -146,8 +148,9 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("video_path",help="the path to the videofile")
         parser.add_argument("azp_path",help="the path to the azp-file")
-        parser.add_argument("output_path",help="the path for the output .txt-file containing the dominant colors, has to include the filename as a .txt-file")
+        parser.add_argument("output_path",help="the path for the output .txt-file that should contain the dominant colors, has to include the filename as a .txt-file")
         parser.add_argument("resolution_width",type=int,help="set the resolution width of the videofile, the resolution scales automatically to 16:9")
+
         parser.add_argument("bin_threshold",type=float,nargs='?',default=5, help="optional, set the percentage (0-100) a color has to reach to be returned,default 5")
         parser.add_argument("colors_to_return",type=int,nargs='?',default=5, help="optional, set how many colors should be returned at maximum,default 5")
         parser.add_argument("colors_txt",nargs='?', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc'")
