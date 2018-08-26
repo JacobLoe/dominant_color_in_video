@@ -10,6 +10,7 @@ import time
 import argparse
 import zipfile
 import xml.etree.ElementTree as ET
+from tqdm import tqdm
 #####################################################
 ## methods
 #####################################################
