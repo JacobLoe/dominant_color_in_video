@@ -4,7 +4,6 @@
 import cv2
 import numpy as np
 import pandas as pd
-from scipy.spatial.distance import euclidean
 from sklearn.neighbors import KDTree
 import time
 import argparse
@@ -181,12 +180,12 @@ if __name__ == "__main__":
                               segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
                            if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
                               segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
-                              colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return))
+                              colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
                               colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
                               print(begin,end,colors_list)
                               file.write((begin,end,colors_list)+'\n') #write the timestamp and the extracted colors to file
              if args.what_to_process=='scene': #if 'scene' is selected run extract_dominant_colors on the the list of segments
-                colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return))
+                colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return)
                 colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
                 print(colors_list)
                 file.write(colors_list+'\n') #write the extracted colors to file
