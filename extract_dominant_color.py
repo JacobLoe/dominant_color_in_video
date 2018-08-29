@@ -20,7 +20,7 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
     vid = cv2.VideoCapture(video)
     frames=[]
     vid_length=0
-    with tqdm(total=end_frame-start_frame) as pbar: #init the progressbar,with max lenght of the given segment
+    with tqdm(total=end_frame-start_frame+1) as pbar: #init the progressbar,with max lenght of the given segment
         while(vid.isOpened()):
             # Capture frame-by-frame
             ret, frame = vid.read() # if ret is false, frame has no content
@@ -31,18 +31,18 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
                 # resize the video to a different resolution
                 frame=cv2.resize(frame,resolution)
                 frames.append(frame) #add the individual frames to a list
-                pbar.update() #update the progressbar
+                pbar.update(1) #update the progressbar
             if vid_length==end_frame:
-                pbar.update()
+                pbar.update(1)
                 break
             vid_length+=1 #increase the vid_length counter
     vid.release()
     cv2.destroyAllWindows()
     return frames
 ##################################################
-def extract_dominant_color(frame_list):
+def extract_dominant_colors(frame_list):
     print(str(len(frame_list))+' frames to process.')
-    start=time.time()
+#    start=time.time()
     rgb_to_color=fn_rgb_to_color() #get the color dict 
     bins={} #bins dict for histograms 
     for rgb in rgb_to_color: #init the dict with zeros for every key
@@ -53,16 +53,16 @@ def extract_dominant_color(frame_list):
     i = 0
 
     kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')  
-    for image in frame_list: #traverse the video
+    for image in tqdm(frame_list): #traverse the video
         img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
         nns = kdt.query(img, k=1, return_distance=False)
         for nn in nns:
             bins[rgb_to_color[rgb_list[nn[0]]]]+=1
         i+=1
-        end=time.time()
-        print('Finished '+str(i)+',time: '+str(end-start))
-        norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
-        bins_norm={k:v/norm_factor for k,v in bins.items()}
+#       end=time.time()
+#        print('Finished '+str(i)+',time: '+str(end-start))
+    norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the binsi
+    bins_norm={k:v/norm_factor for k,v in bins.items()}
     return bins_norm
 ####################################################
 def bins_to_df(bins,bin_threshold=5,colors_to_return=5):
