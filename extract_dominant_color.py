@@ -10,6 +10,7 @@ import argparse
 import zipfile
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
+import os
 #####################################################
 ## methods
 #####################################################
@@ -42,7 +43,10 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
 ##################################################
 def extract_dominant_colors(frame_list):
     print(str(len(frame_list))+' frames to process.')
+<<<<<<< HEAD
 #    start=time.time()
+=======
+>>>>>>> 4d93fb7515eeb34feb343884c918b82fe18e190d
     rgb_to_color=fn_rgb_to_color() #get the color dict 
     bins={} #bins dict for histograms 
     for rgb in rgb_to_color: #init the dict with zeros for every key
@@ -59,10 +63,15 @@ def extract_dominant_colors(frame_list):
         for nn in nns:
             bins[rgb_to_color[rgb_list[nn[0]]]]+=1
         i+=1
+<<<<<<< HEAD
 #       end=time.time()
 #        print('Finished '+str(i)+',time: '+str(end-start))
     norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the binsi
     bins_norm={k:v/norm_factor for k,v in bins.items()}
+=======
+        norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
+        bins_norm={k:v/norm_factor for k,v in bins.items()}
+>>>>>>> 4d93fb7515eeb34feb343884c918b82fe18e190d
     return bins_norm
 ####################################################
 def bins_to_df(bins,bin_threshold=5,colors_to_return=5):
@@ -140,6 +149,62 @@ def fn_rgb_to_color(*path):
         #skin is caucasian
     return rgb_to_color
 ######################################################
+def read_azp(azp_path):
+    #extract the .azp-file to /tmp
+    zip_ref = zipfile.ZipFile(azp_path)
+    zip_ref.extractall('/tmp')
+    #read the .xml-file
+    tree = ET.parse('/tmp/content.xml')
+    root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
+    #traverse the .xml-file
+    with open(args.output_path,'w') as file:
+        if args.what_to_process=='scene':
+            segment_list=[]
+            for child in root[0].iter():
+                if child.get('type')=='#Shot': #whenever a shot annotation is found, extract the timestamp from the xml
+                    dominant_colors_list=[]
+                for child2 in child:
+                    if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
+                        end=int(child2.get('end'))/1000*25
+                        begin=int(child2.get('begin'))/1000*25
+                        if args.what_to_process=='scene': #if 'scene' is selected append the frames of the segments to a list
+                            segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
+                        if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
+                            segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
+                            colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
+                            colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
+                            #print(begin,end,colors_list)
+                            file.write((begin,end,colors_list)+'\n') #write the timestamp and the extracted colors to file
+            if args.what_to_process=='scene': #if 'scene' is selected run extract_dominant_colors on the the list of segments
+                colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return)
+                colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
+                print(colors_list)
+                file.write(colors_list+'\n') #write the extracted colors to file
+            file.close()
+######################################################
+def azp_path(path):
+    if path[-4:] == '.azp': #if the path is to a single file
+#        print('exactly')
+         read_azp(path)
+    elif path[0][-4:] == '.azp': #if the path is to several files
+        print('like')
+        for azp_path in path:
+            #print(azp_path)
+            read_azp(azp_path)
+    else: #else it is assumed the path points to a directory
+        directory_content = os.listdir(path)
+        azp_list=[]
+        for elem in directory_content:
+            if elem[-4:]=='.azp':
+                if path[-1]=='/': #if the path ends with an '/', add the .azp-file
+                    azp_list.append(path+elem)    
+                else: #else, add a '/' and then the .azp-file
+                    azp_list.append(path+'/'+elem)
+        for azp_path in azp_list:
+            read_azp(azp_path)
+            #print(azp_path)
+        print('planned')
+######################################################
 if __name__ == "__main__":
         ##############################################
         ## command line arguments
@@ -147,7 +212,7 @@ if __name__ == "__main__":
         #arguments for command line
         parser = argparse.ArgumentParser()
         parser.add_argument("video_path",help="the path to the videofile")
-        parser.add_argument("azp_path",help="the path to the azp-file")
+        parser.add_argument("azp_path",help="the path to a azp-file, a list of .azp-files or the path to a directory cotaining .azp-files")
         #optional arguments
         parser.add_argument("output_path",nargs='?',default='dominant_colors.txt',help="optional,the path for the output .txt-file that should contain the dominant colors, has to include the filename as a .txt-file,default = dominant_colors.txt")       
         parser.add_argument("resolution_width",type=int,nargs='?',default=200,help="optional, set the resolution width of the videofile, the resolution scales automatically to 16:9,default = 200")
@@ -159,35 +224,5 @@ if __name__ == "__main__":
         ##############################################
         ## main
         ##############################################
-        #extract the .azp-file to /tmp
-        zip_ref = zipfile.ZipFile(args.azp_path)
-        zip_ref.extractall('/tmp')
-        #read the .xml-file
-        tree = ET.parse('/tmp/content.xml')
-        root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
-        #traverse the .xml-file
-        with open(args.output_path,'w') as file:
-             if args.what_to_process=='scene':
-                segment_list=[]
-             for child in root[0].iter():
-                 if child.get('type')=='#Shot': #whenever a shot annotation is found, extract the timestamp from the xml
-                    dominant_colors_list=[]
-                    for child2 in child:
-                        if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
-                           end=int(child2.get('end'))/1000*25
-                           begin=int(child2.get('begin'))/1000*25
-                           if args.what_to_process=='scene': #if 'scene' is selected append the frames of the segments to a list
-                              segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
-                           if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
-                              segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
-                              colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
-                              colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
-                              print(begin,end,colors_list)
-                              file.write((begin,end,colors_list)+'\n') #write the timestamp and the extracted colors to file
-             if args.what_to_process=='scene': #if 'scene' is selected run extract_dominant_colors on the the list of segments
-                colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return)
-                colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
-                print(colors_list)
-                file.write(colors_list+'\n') #write the extracted colors to file
-             file.close()
+        azp_path(args.azp_path)
         print('done')
