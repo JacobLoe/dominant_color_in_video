@@ -11,6 +11,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
 import os
+from skimage.color import rgb2hsv,rgb2lab
 #####################################################
 ## methods
 #####################################################
@@ -39,14 +40,23 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
             vid_length+=1 #increase the vid_length counter
     vid.release()
     cv2.destroyAllWindows()
+    frames=change_colorspace(frames,args.target_colorspace)
     return frames
+##################################################
+def change_colorspace(frame_list,target_colorspace):
+    print(target_colorspace)
+    changed_frame_list=[]
+    if target_colorspace=='HSV':
+        changed_frame_list = [rgb2hsv(frame) for frame in frame_list]
+        return changed_frame_list
+    if target_colorspace=='cie-lab':
+        changed_frame_list = [rgb2lab(frame) for frame in frame_list]
+        return changed_frame_list
+    else:
+        return frame_list
 ##################################################
 def extract_dominant_colors(frame_list):
     print(str(len(frame_list))+' frames to process.')
-<<<<<<< HEAD
-#    start=time.time()
-=======
->>>>>>> 4d93fb7515eeb34feb343884c918b82fe18e190d
     rgb_to_color=fn_rgb_to_color() #get the color dict 
     bins={} #bins dict for histograms 
     for rgb in rgb_to_color: #init the dict with zeros for every key
@@ -63,15 +73,8 @@ def extract_dominant_colors(frame_list):
         for nn in nns:
             bins[rgb_to_color[rgb_list[nn[0]]]]+=1
         i+=1
-<<<<<<< HEAD
-#       end=time.time()
-#        print('Finished '+str(i)+',time: '+str(end-start))
     norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the binsi
     bins_norm={k:v/norm_factor for k,v in bins.items()}
-=======
-        norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
-        bins_norm={k:v/norm_factor for k,v in bins.items()}
->>>>>>> 4d93fb7515eeb34feb343884c918b82fe18e190d
     return bins_norm
 ####################################################
 def bins_to_df(bins,bin_threshold=5,colors_to_return=5):
@@ -158,8 +161,8 @@ def read_azp(azp_path):
     root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
     #traverse the .xml-file
     with open(args.output_path,'w') as file:
-        if args.what_to_process=='scene':
-            segment_list=[]
+            if args.what_to_process=='scene':
+               segment_list=[]
             for child in root[0].iter():
                 if child.get('type')=='#Shot': #whenever a shot annotation is found, extract the timestamp from the xml
                     dominant_colors_list=[]
@@ -184,8 +187,8 @@ def read_azp(azp_path):
 ######################################################
 def azp_path(path):
     if path[-4:] == '.azp': #if the path is to a single file
-#        print('exactly')
-         read_azp(path)
+        print('exactly')
+        read_azp(path)
     elif path[0][-4:] == '.azp': #if the path is to several files
         print('like')
         for azp_path in path:
@@ -202,7 +205,6 @@ def azp_path(path):
                     azp_list.append(path+'/'+elem)
         for azp_path in azp_list:
             read_azp(azp_path)
-            #print(azp_path)
         print('planned')
 ######################################################
 if __name__ == "__main__":
@@ -214,15 +216,16 @@ if __name__ == "__main__":
         parser.add_argument("video_path",help="the path to the videofile")
         parser.add_argument("azp_path",help="the path to a azp-file, a list of .azp-files or the path to a directory cotaining .azp-files")
         #optional arguments
-        parser.add_argument("output_path",nargs='?',default='dominant_colors.txt',help="optional,the path for the output .txt-file that should contain the dominant colors, has to include the filename as a .txt-file,default = dominant_colors.txt")       
-        parser.add_argument("resolution_width",type=int,nargs='?',default=200,help="optional, set the resolution width of the videofile, the resolution scales automatically to 16:9,default = 200")
-        parser.add_argument("bin_threshold",type=float,nargs='?',default=5, help="optional, set the percentage (0-100) a color has to reach to be returned,default = 5")
-        parser.add_argument("colors_to_return",type=int,nargs='?',default=5, help="optional, set how many colors should be returned at maximum,default = 5")
-        parser.add_argument("colors_txt",nargs='?', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc',default are a list of 40 colors hardcoded")
-        parser.add_argument("what_to_process",nargs='?',default='segment',help="optional,decide if the dominant colors should be processed per segment or a whole scene, default is segment, switch to scene with 'scene'")
+        parser.add_argument("--output_path",nargs='?',default='dominant_colors.txt',help="optional,the path for the output .txt-file that should contain the dominant colors, has to include the filename as a .txt-file,default = dominant_colors.txt")       
+        parser.add_argument("--resolution_width",type=int,nargs='?',default=200,help="optional, set the resolution width of the videofile, the resolution scales automatically to 16:9,default = 200")
+        parser.add_argument("--bin_threshold",type=float,nargs='?',default=5, help="optional, set the percentage (0-100) a color has to reach to be returned,default = 5")
+        parser.add_argument("--colors_to_return",type=int,nargs='?',default=5, help="optional, set how many colors should be returned at maximum,default = 5")
+        parser.add_argument("--colors_txt",nargs='?', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc',default are a list of 40 colors hardcoded")
+        parser.add_argument("--what_to_process",nargs='?',default='segment',help="optional,decide if the dominant colors should be processed per segment or a whole scene, default is segment, switch to scene with 'scene'")
+        parser.add_argument("--target_colorspace",nargs='?',help='change the colorspace of the video, for now only supports HSV and cie-lab')
         args=parser.parse_args()
         ##############################################
         ## main
         ##############################################
-        azp_path(args.azp_path)
+        #azp_path(args.azp_path)
         print('done')
