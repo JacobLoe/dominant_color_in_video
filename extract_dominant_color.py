@@ -162,22 +162,22 @@ def read_azp(azp_path):
     #traverse the .xml-file
     with open(args.output_path,'w') as file:
             if args.what_to_process=='scene':
-               segment_list=[]
+                segment_list=[]
             for child in root[0].iter():
                 if child.get('type')=='#Shot': #whenever a shot annotation is found, extract the timestamp from the xml
                     dominant_colors_list=[]
-                for child2 in child:
-                    if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
-                        end=int(child2.get('end'))/1000*25
-                        begin=int(child2.get('begin'))/1000*25
-                        if args.what_to_process=='scene': #if 'scene' is selected append the frames of the segments to a list
-                            segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
-                        if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
-                            segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
-                            colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
-                            colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
-                            #print(begin,end,colors_list)
-                            file.write((begin,end,colors_list)+'\n') #write the timestamp and the extracted colors to file
+                    for child2 in child:
+                        if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
+                            end=int(child2.get('end'))/1000*25
+                            begin=int(child2.get('begin'))/1000*25
+                            if args.what_to_process=='scene': #if 'scene' is selected append the frames of the segments to a list
+                                segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
+                            if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
+                                segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
+                                colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
+                                colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
+                                print(begin,end,colors_list)
+                                file.write((begin,end,colors_list)+'\n') #write the timestamp and the extracted colors to file
             if args.what_to_process=='scene': #if 'scene' is selected run extract_dominant_colors on the the list of segments
                 colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return)
                 colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
@@ -227,5 +227,5 @@ if __name__ == "__main__":
         ##############################################
         ## main
         ##############################################
-        #azp_path(args.azp_path)
+        azp_path(args.azp_path)
         print('done')
