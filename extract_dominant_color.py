@@ -13,10 +13,10 @@ from tqdm import tqdm
 import os
 from skimage.color import rgb2hsv,rgb2lab
 #####################################################
-## methods
+## functions
 #####################################################
 #read video file frame by frame, beginning and ending with a timestamp
-def read_video_segments(video,start_frame,end_frame,resolution_width=200):
+def read_video_segments(video,start_frame,end_frame,resolution_width=200,target_colorspace=None):
     resolution_height=int(round(resolution_width * 9/16))
     resolution=(resolution_width,resolution_height)
     vid = cv2.VideoCapture(video)
@@ -40,7 +40,7 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
             vid_length+=1 #increase the vid_length counter
     vid.release()
     cv2.destroyAllWindows()
-    frames=change_colorspace(frames,args.target_colorspace)
+    frames=change_colorspace(frames,target_colorspace)
     return frames
 ##################################################
 def change_colorspace(frame_list,target_colorspace):
@@ -168,12 +168,12 @@ def read_azp(azp_path):
                     dominant_colors_list=[]
                     for child2 in child:
                         if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}millisecond-fragment':
-                            end=int(child2.get('end'))/1000*25
-                            begin=int(child2.get('begin'))/1000*25
+                            end=round(int(child2.get('end'))/1000*25) #timestamps are rounded, because there are no half frames
+                            begin=round(int(child2.get('begin'))/1000*25)
                             if args.what_to_process=='scene': #if 'scene' is selected append the frames of the segments to a list
-                                segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
+                                segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace))
                             if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
-                                segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
+                                segment = read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace)
                                 colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
                                 colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
                                 print(begin,end,colors_list)
