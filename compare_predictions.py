@@ -30,5 +30,29 @@ def read_prediction_txt_file(txt_file):
     return colors_list
 #####################################################
 if __name__ == "__main__":
-   #color_accuracy(colors_target,read_prediction_txt_file('dominant_colors.txt'))
+   colors_target=[]
+   for child in root[0].iter():
+       if child.get('type')=='#ColourRange': #whenever a shot annotation is found, extract the timestamp from the xml
+          for child2 in child:
+              if child2.tag=='{http://experience.univ-lyon1.fr/advene/ns}content':
+                 colors_target.append(child2.text)
+   with open('results/results_rgb.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_rgb.txt'))))
+   with open('results/results_HSV.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_HSV.txt'))))
+   with open('results/results_cie-lab.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_cie-lab.txt'))))
+   with open('results/results_reduced_colors_rgb.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_reduced_colors_rgb.txt'))))
+   with open('results/results_reduced_colors_HSV.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_reduced_colors_HSV.txt'))))
+   with open('results/results_reduced_colors_cie-lab.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_reduced_colors_cie-lab.txt'))))
+   with open('results/results_scene_rgb.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_scene.txt'))))
+   with open('results/results_scene_HSV.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_scene_HSV.txt'))))
+   with open('results/results_scene_cie-lab.txt','w') as file:
+        file.write(str(color_accuracy(colors_target,read_prediction_txt_file('predictions/dominant_colors_scene_cie-lab.txt'))))
+
    print('done')
