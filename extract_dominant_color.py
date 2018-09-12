@@ -32,6 +32,7 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200,target_
             if vid_length>=start_frame:
                 # resize the video to a different resolution
                 frame=cv2.resize(frame,resolution)
+		frame=np.array(frame).astype('float')
                 frames.append(frame) #add the individual frames to a list
                 pbar.update(1) #update the progressbar
             if vid_length==end_frame:
@@ -66,7 +67,7 @@ def extract_dominant_colors(frame_list):
         rgb_list.append(rgb)
     i = 0
 
-    kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')  
+    kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')
     for image in tqdm(frame_list): #traverse the video
         img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
         nns = kdt.query(img, k=1, return_distance=False)
@@ -146,12 +147,12 @@ def fn_rgb_to_color(*path):
         'skin':(255,224,189),
         'purple4':(147,112,219)}
         colors_aux={}
-        if target_colorspace=='HSV':
+        if args.target_colorspace=='HSV':
             print('HSV')
             for color in colors:
                 colors_aux[color]=tuple(rgb2hsv(np.array((colors[color]),dtype='float').reshape(1,1,3)).reshape(3))
             colors=colors_aux
-        if target_colorspace=='cie-lab':
+        if args.target_colorspace=='cie-lab':
             print('cie-lab')
             for color in colors:
                 colors_aux[color]=tuple(rgb2lab(np.array((colors[color]),dtype='float').reshape(1,1,3)).reshape(3))
