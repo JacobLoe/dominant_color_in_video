@@ -146,16 +146,15 @@ def fn_rgb_to_color(*path):
         'skin':(255,224,189),
         'purple4':(147,112,219)}
         colors_aux={}
-        if args.target_colorspace=='HSV':
+        if target_colorspace=='HSV':
             print('HSV')
             for color in colors:
-                colors_aux[color]=tuple(rgb2hsv(np.array((colors[color])).reshape(1,1,3)).reshape(3))
+                colors_aux[color]=tuple(rgb2hsv(np.array((colors[color]),dtype='float').reshape(1,1,3)).reshape(3))
             colors=colors_aux
-        if args.target_colorspace=='cie-lab':
+        if target_colorspace=='cie-lab':
             print('cie-lab')
             for color in colors:
-#                 print(tuple(rgb2lab(np.array((colors[color])).reshape(1,1,3)).reshape(3)))
-                colors_aux[color]=tuple(rgb2lab(np.array((colors[color])).reshape(1,1,3)).reshape(3))
+                colors_aux[color]=tuple(rgb2lab(np.array((colors[color]),dtype='float').reshape(1,1,3)).reshape(3))
             colors=colors_aux
         rgb_to_color={}
         for color in colors:
@@ -189,7 +188,7 @@ def read_azp(azp_path):
                                 colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
                                 colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
                                 print(begin,end,colors_list)
-                                file.write((begin,end,colors_list)+'\n') #write the timestamp and the extracted colors to file
+                                file.write(str((begin,end,colors_list))+'\n') #write the timestamp and the extracted colors to file
             if args.what_to_process=='scene': #if 'scene' is selected run extract_dominant_colors on the the list of segments
                 colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return)
                 colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
@@ -202,7 +201,7 @@ def azp_path(path):
         print('exactly')
         read_azp(path)
     elif path[0][-4:] == '.azp': #if the path is to several files
-        print('like')
+        print('as')
         for azp_path in path:
             #print(azp_path)
             read_azp(azp_path)
