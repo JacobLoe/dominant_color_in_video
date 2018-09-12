@@ -1,3 +1,0 @@
-140000 150000 ['red','black','white','green']
-150000 160000 ['yellow','blue','purple','violet']
-160000 170000 ['crimson','black','grey','brown']

@@ -32,7 +32,7 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200,target_
             if vid_length>=start_frame:
                 # resize the video to a different resolution
                 frame=cv2.resize(frame,resolution)
-		frame=np.array(frame).astype('float')
+                frame=np.array(frame).astype('float')
                 frames.append(frame) #add the individual frames to a list
                 pbar.update(1) #update the progressbar
             if vid_length==end_frame:
@@ -70,7 +70,7 @@ def extract_dominant_colors(frame_list):
     kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')
     if args.what_to_process=='scene':
        for frames in tqdm(frame_list): #traverse the video
-	   for image in frames:
+           for image in frames:
                img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
                nns = kdt.query(img, k=1, return_distance=False)
                for nn in nns:
@@ -203,7 +203,7 @@ def read_azp(azp_path):
                 colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return)
                 colors_list = [(color,perc) for color,perc in zip(colors_df.index.values,colors_df.values.tolist())]
                 print(colors_list)
-                file.write(colors_list+'\n') #write the extracted colors to file
+                file.write(str(colors_list)+'\n') #write the extracted colors to file
             file.close()
 ######################################################
 def azp_path(path):
