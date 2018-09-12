@@ -68,12 +68,21 @@ def extract_dominant_colors(frame_list):
     i = 0
 
     kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')
-    for image in tqdm(frame_list): #traverse the video
-        img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
-        nns = kdt.query(img, k=1, return_distance=False)
-        for nn in nns:
-            bins[rgb_to_color[rgb_list[nn[0]]]]+=1
-        i+=1
+    if args.what_to_process=='scene':
+       for frames in tqdm(frame_list): #traverse the video
+	   for image in frames:
+               img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
+               nns = kdt.query(img, k=1, return_distance=False)
+               for nn in nns:
+                   bins[rgb_to_color[rgb_list[nn[0]]]]+=1
+               i+=1
+    else:
+       for image in tqdm(frame_list): #traverse the video
+           img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
+           nns = kdt.query(img, k=1, return_distance=False)
+           for nn in nns:
+               bins[rgb_to_color[rgb_list[nn[0]]]]+=1
+           i+=1
     norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the binsi
     bins_norm={k:v/norm_factor for k,v in bins.items()}
     return bins_norm
