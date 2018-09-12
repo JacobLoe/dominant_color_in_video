@@ -88,7 +88,7 @@ def bins_to_df(bins,bin_threshold=5,colors_to_return=5):
                                     #color_return are there return all
 #####################################################
 def fn_rgb_to_color(*path):
-    if path:
+    if not ('no'):
         path=str(path)[2:-3] #to get rid of the of the *args things
         rgb_to_color = {}
         with open(path) as f:
@@ -96,7 +96,7 @@ def fn_rgb_to_color(*path):
                 #split lines at "::
                 color, rgb = line.strip().split(':')
                 #strip the rgb-string of the parenthesis, split it up a the commas,
-                #cast them to int and put them into tuples
+                #cast them to int and put them into a tuples
                 rgb_value=tuple(map(int,(rgb.strip('(').strip(')').split(','))))
                 rgb_to_color[rgb_value] = color
     else:
@@ -145,11 +145,23 @@ def fn_rgb_to_color(*path):
         'wheat':(245,222,179),
         'skin':(255,224,189),
         'purple4':(147,112,219)}
+        colors_aux={}
+        if args.target_colorspace=='HSV':
+            print('HSV')
+            for color in colors:
+                colors_aux[color]=tuple(rgb2hsv(np.array((colors[color])).reshape(1,1,3)).reshape(3))
+            colors=colors_aux
+        if args.target_colorspace=='cie-lab':
+            print('cie-lab')
+            for color in colors:
+#                 print(tuple(rgb2lab(np.array((colors[color])).reshape(1,1,3)).reshape(3)))
+                colors_aux[color]=tuple(rgb2lab(np.array((colors[color])).reshape(1,1,3)).reshape(3))
+            colors=colors_aux
         rgb_to_color={}
         for color in colors:
             rgb_to_color[colors[color]]=color
         #purple4 is median purple
-        #skin is caucasian
+        #skin is caucasian        
     return rgb_to_color
 ######################################################
 def read_azp(azp_path):
