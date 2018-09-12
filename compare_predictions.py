@@ -2,6 +2,8 @@
 ## libraries
 #####################################################
 import extract_dominant_color as edc
+import zipfile
+import xml.etree.ElementTree as ET
 #####################################################
 ## functions
 #####################################################
@@ -30,6 +32,10 @@ def read_prediction_txt_file(txt_file):
     return colors_list
 #####################################################
 if __name__ == "__main__":
+   zip_ref = zipfile.ZipFile('/data/scenes/CompanyMen_v1.0-split-012-Bobby_being_angry.azp')
+   zip_ref.extractall('/tmp')
+   tree = ET.parse('/tmp/content.xml')
+   root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
    colors_target=[]
    for child in root[0].iter():
        if child.get('type')=='#ColourRange': #whenever a shot annotation is found, extract the timestamp from the xml
