@@ -97,11 +97,10 @@ def bins_to_df(bins,bin_threshold=5,colors_to_return=5):
     return df.head(colors_to_return)#return the color_return highest bins, default 5, if less bins then
                                     #color_return are there return all
 #####################################################
-def fn_rgb_to_color(*path):
-    if not ('no'):
-        path=str(path)[2:-3] #to get rid of the of the *args things
+def fn_rgb_to_color():
+    if args.colors_txt:
         rgb_to_color = {}
-        with open(path) as f:
+        with open(args.colors_txt) as f:
             for line in f:
                 #split lines at "::
                 color, rgb = line.strip().split(':')
