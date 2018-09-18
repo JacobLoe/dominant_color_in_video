@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 import extract_dominant_color as edc
 import argparse
 import numpy as np
+import cv2
 ######################################################
 if __name__ == "__main__":
         ##############################################
@@ -30,9 +31,11 @@ if __name__ == "__main__":
                                    begin.append(round(int(child2.get('begin'))/1000*25))
                 if i==2:
                     break
-        vid1=edc.read_video_segments('/data/Wells_John_The_Company_Men.mp4',end[0]-2,end[0])
-        vid2=edc.read_video_segments('/data/Wells_John_The_Company_Men.mp4',begin[1],begin[1]+2)
-        print(np.shape(vid1))
+        vid1=edc.read_video_segments('/home/jacob/Downloads/Wells_John_CompanyMen_full.mp4',end[0]-2,end[0])
+        #vid2=edc.read_video_segments('/data/Wells_John_The_Company_Men.mp4',begin[1],begin[1]+2)
+        print(len(vid1))
+        cv2.imshow('s',vid1[0])
+        #print(np.shape(vid1))
         print('#######################################')
         #print(vid2[0])
         print('done')

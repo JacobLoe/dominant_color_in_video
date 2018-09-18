@@ -200,7 +200,7 @@ def read_azp(azp_path):
                                     app=str(color)+str(' ')+str(perc)
                                     colors_list.append(app)
                                 print(begin,end,colors_list)
-                                file.write(str(begin)+', '+str(end)+' '+str(colors_list)+'\n') #write the timestamp and the extracted colors to file
+                                file.write(str(child2.get('begin'))+' '+str(child2.get('end'))+' '+str(colors_list)+'\n') #write the timestamp and the extracted colors to file
             if args.what_to_process=='scene': #if 'scene' is selected run extract_dominant_colors on the the list of segments
                 colors_df = bins_to_df(extract_dominant_colors(segment_list),args.bin_threshold,args.colors_to_return)
                 colors_list=[]
