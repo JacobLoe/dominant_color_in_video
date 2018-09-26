@@ -7,11 +7,13 @@ import extract_dominant_color as edc
 import argparse
 import numpy as np
 import cv2
+import os
 ######################################################
 if __name__ == "__main__":
         ##############################################
         parser = argparse.ArgumentParser()
-        parser.add_argument("azp_path",help="the path to a azp-file, a list of .azp-files or the path to a directory cotaining .azp-files")
+        parser.add_argument("azp_path",help="the path to a azp-file")
+        parser.add_argument("video_path",help="the path to a video")
         args=parser.parse_args()
         ## main
         # read the .xml-file
@@ -31,11 +33,16 @@ if __name__ == "__main__":
                                    begin.append(round(int(child2.get('begin'))/1000*25))
                 if i==2:
                     break
-        vid1=edc.read_video_segments('/home/jacob/Downloads/Wells_John_CompanyMen_full.mp4',end[0]-2,end[0])
-        #vid2=edc.read_video_segments('/data/Wells_John_The_Company_Men.mp4',begin[1],begin[1]+2)
-        print(len(vid1))
-        cv2.imshow('s',vid1[0])
-        #print(np.shape(vid1))
-        print('#######################################')
-        #print(vid2[0])
+        vid_full=[]
+        for start,stop in zip(begin,end):
+            aux=read_video_segments('/home/jacob/Downloads/Wells_John_CompanyMen_full.mp4',start,stop,1080)
+            aux = [x.astype('int') for x in aux]
+            vid_full.append(aux)
+        for j,frames in enumerate(vid_full):
+            for i,frame in enumerate(frames):
+                direc='/home/jacob/Downloads/vid'+str(j)+'_full'
+                if not os.path.exists(direc):
+                    os.makedirs(direc)
+                name =direc+'/begin_'+str(i)+'.png'
+                cv2.imwrite(name,frame)
         print('done')
