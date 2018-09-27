@@ -42,7 +42,7 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200,target_
     vid.release()
     cv2.destroyAllWindows()
     frames=change_colorspace(frames,target_colorspace)
-    return frames
+    return frames[:-1]
 ##################################################
 def change_colorspace(frame_list,target_colorspace):
     print(target_colorspace)
