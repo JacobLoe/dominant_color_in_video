@@ -16,7 +16,7 @@ from skimage.color import rgb2hsv,rgb2lab
 ## functions
 #####################################################
 #read video file frame by frame, beginning and ending with a timestamp
-def read_video_segments(video,start_frame,end_frame,resolution_width=200,target_colorspace=None):
+def read_video_segments(video,start_frame,end_frame,resolution_width=200):
     resolution_height=int(round(resolution_width * 9/16))
     resolution=(resolution_width,resolution_height)
     vid = cv2.VideoCapture(video)
@@ -41,10 +41,10 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200,target_
             vid_length+=1 #increase the vid_length counter
     vid.release()
     cv2.destroyAllWindows()
-    frames=change_colorspace(frames,target_colorspace)
+    frames=change_colorspace(frames)
     return frames[:-1]
 ##################################################
-def change_colorspace(frame_list,target_colorspace):
+def change_colorspace(frame_list):
     print(target_colorspace)
     changed_frame_list=[]
     if target_colorspace=='HSV':
