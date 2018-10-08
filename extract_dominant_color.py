@@ -32,7 +32,7 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
             if vid_length>=start_frame:
                 # resize the video to a different resolution
                 frame=cv2.resize(frame,resolution)
-                frame=np.array(frame).astype('float')
+                frame=np.array(frame,dtype='uint8')
                 frames.append(frame) #add the individual frames to a list
                 pbar.update(1) #update the progressbar
             if vid_length==end_frame:
@@ -45,13 +45,16 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
     return frames[:-1]
 ##################################################
 def change_colorspace(frame_list):
-    print(target_colorspace)
     changed_frame_list=[]
-    if target_colorspace=='HSV':
-        changed_frame_list = [rgb2hsv(frame) for frame in frame_list]
+    if args.target_colorspace=='HSV':
+        print('HSV')
+        for frame in frame_list:
+            changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_RGB2HSV))
         return changed_frame_list
-    if target_colorspace=='cie-lab':
-        changed_frame_list = [rgb2lab(frame) for frame in frame_list]
+    if args.target_colorspace=='cie-lab':
+        print('cie-lab')
+        for frame in frame_list:
+            changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_RGB2LAB))
         return changed_frame_list
     else:
         return frame_list
@@ -158,12 +161,18 @@ def fn_rgb_to_color():
         if args.target_colorspace=='HSV':
             print('HSV')
             for color in colors:
-                colors_aux[color]=tuple(rgb2hsv(np.array((colors[color]),dtype='float').reshape(1,1,3)).reshape(3))
+                a = np.array((colors[color]),dtype='uint8')
+                b = a.reshape(1,1,3)
+                c = cv2.cvtColor(b,cv2.COLOR_RGB2HSV)
+                colors_aux[color]=tuple(c.reshape(3))
             colors=colors_aux
         if args.target_colorspace=='cie-lab':
             print('cie-lab')
             for color in colors:
-                colors_aux[color]=tuple(rgb2lab(np.array((colors[color]),dtype='float').reshape(1,1,3)).reshape(3))
+                a = np.array((colors[color]),dtype='uint8')
+                b = a.reshape(1,1,3)
+                c = cv2.cvtColor(b,cv2.COLOR_RGB2LAB)
+                colors_aux[color]=tuple(c.reshape(3))
             colors=colors_aux
         rgb_to_color={}
         for color in colors:
