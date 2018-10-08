@@ -200,9 +200,9 @@ def read_azp(azp_path):
                             end=round(int(child2.get('end'))/1000*25) #timestamps are rounded, because there are no half frames
                             begin=round(int(child2.get('begin'))/1000*25)
                             if args.what_to_process=='scene': #if 'scene' is selected append the frames of the segments to a list
-                                segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace))
+                                segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
                             if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
-                                segment = read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace)
+                                segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
                                 colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
                                 colors_list=[]
                                 for color,perc in zip(colors_df.index.values,colors_df.values.tolist()):
