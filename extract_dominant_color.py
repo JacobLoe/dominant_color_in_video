@@ -16,7 +16,7 @@ from skimage.color import rgb2hsv,rgb2lab
 ## functions
 #####################################################
 #read video file frame by frame, beginning and ending with a timestamp
-def read_video_segments(video,start_frame,end_frame,resolution_width=200):
+def read_video_segments(video,start_frame,end_frame,resolution_width,target_colorspace):
     resolution_height=int(round(resolution_width * 9/16))
     resolution=(resolution_width,resolution_height)
     vid = cv2.VideoCapture(video)
@@ -41,17 +41,17 @@ def read_video_segments(video,start_frame,end_frame,resolution_width=200):
             vid_length+=1 #increase the vid_length counter
     vid.release()
     cv2.destroyAllWindows()
-    frames=change_colorspace(frames)
+    frames=change_colorspace(frames,target_colorspace)
     return frames[:-1]
 ##################################################
-def change_colorspace(frame_list):
+def change_colorspace(frame_list,target_colorspace):
     changed_frame_list=[]
-    if args.target_colorspace=='HSV':
+    if target_colorspace=='HSV':
         print('HSV')
         for frame in frame_list:
             changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_RGB2HSV))
         return changed_frame_list
-    if args.target_colorspace=='cie-lab':
+    if target_colorspace=='cie-lab':
         print('cie-lab')
         for frame in frame_list:
             changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_RGB2LAB))
@@ -100,17 +100,17 @@ def bins_to_df(bins,bin_threshold=5,colors_to_return=5):
     return df.head(colors_to_return)#return the color_return highest bins, default 5, if less bins then
                                     #color_return are there return all
 #####################################################
-def fn_rgb_to_color():
-    if args.colors_txt:
-        rgb_to_color = {}
-        with open(args.colors_txt) as f:
+def fn_rgb_to_color(target_colorspace,path):
+    if (path != 'full'):
+        colors = {}
+        with open(path) as f:
             for line in f:
                 #split lines at "::
                 color, rgb = line.strip().split(':')
                 #strip the rgb-string of the parenthesis, split it up a the commas,
                 #cast them to int and put them into a tuples
                 rgb_value=tuple(map(int,(rgb.strip('(').strip(')').split(','))))
-                rgb_to_color[rgb_value] = color
+                colors[color]=rgb_value
     else:
         colors={'darkred':(139,0,0),
         'firebrick':(178,34,34),
@@ -157,28 +157,30 @@ def fn_rgb_to_color():
         'wheat':(245,222,179),
         'skin':(255,224,189),
         'purple4':(147,112,219)}
-        colors_aux={}
-        if args.target_colorspace=='HSV':
-            print('HSV')
-            for color in colors:
-                a = np.array((colors[color]),dtype='uint8')
-                b = a.reshape(1,1,3)
-                c = cv2.cvtColor(b,cv2.COLOR_RGB2HSV)
-                colors_aux[color]=tuple(c.reshape(3))
-            colors=colors_aux
-        if args.target_colorspace=='cie-lab':
-            print('cie-lab')
-            for color in colors:
-                a = np.array((colors[color]),dtype='uint8')
-                b = a.reshape(1,1,3)
-                c = cv2.cvtColor(b,cv2.COLOR_RGB2LAB)
-                colors_aux[color]=tuple(c.reshape(3))
-            colors=colors_aux
-        rgb_to_color={}
+        
+    colors_aux={}
+    if target_colorspace=='HSV':
+        print('HSV')
         for color in colors:
-            rgb_to_color[colors[color]]=color
-        #purple4 is median purple
-        #skin is caucasian        
+            a = np.array((colors[color]),dtype='uint8')
+            b = a.reshape(1,1,3)
+            c = cv2.cvtColor(b,cv2.COLOR_RGB2HSV)
+            colors_aux[color]=tuple(c.reshape(3))
+        colors=colors_aux
+    if target_colorspace=='cie-lab':
+        print('cie-lab')
+        for color in colors:
+            a = np.array((colors[color]),dtype='uint8')
+            b = a.reshape(1,1,3)
+            c = cv2.cvtColor(b,cv2.COLOR_RGB2LAB)
+            colors_aux[color]=tuple(c.reshape(3))
+        colors=colors_aux
+        
+    rgb_to_color={}
+    for color in colors:
+        rgb_to_color[colors[color]]=color
+    #purple4 is median purple
+    #skin is caucasian        
     return rgb_to_color
 ######################################################
 def read_azp(azp_path):
@@ -200,9 +202,9 @@ def read_azp(azp_path):
                             end=round(int(child2.get('end'))/1000*25) #timestamps are rounded, because there are no half frames
                             begin=round(int(child2.get('begin'))/1000*25)
                             if args.what_to_process=='scene': #if 'scene' is selected append the frames of the segments to a list
-                                segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width))
+                                segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace))
                             if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
-                                segment = read_video_segments(args.video_path,begin,end,args.resolution_width)
+                                segment = read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace)
                                 colors_df = bins_to_df(extract_dominant_colors(segment),args.bin_threshold,args.colors_to_return)
                                 colors_list=[]
                                 for color,perc in zip(colors_df.index.values,colors_df.values.tolist()):
@@ -255,9 +257,9 @@ if __name__ == "__main__":
         parser.add_argument("--resolution_width",type=int,nargs='?',default=200,help="optional, set the resolution width of the videofile, the resolution scales automatically to 16:9,default = 200")
         parser.add_argument("--bin_threshold",type=float,nargs='?',default=5, help="optional, set the percentage (0-100) a color has to reach to be returned,default = 5")
         parser.add_argument("--colors_to_return",type=int,nargs='?',default=5, help="optional, set how many colors should be returned at maximum,default = 5")
-        parser.add_argument("--colors_txt",nargs='?', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc',default are a list of 40 colors hardcoded")
+        parser.add_argument("--colors_txt",nargs='?',default='full', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc',default are a list of 40 colors hardcoded")
         parser.add_argument("--what_to_process",nargs='?',default='segment',help="optional,decide if the dominant colors should be processed per segment or a whole scene, default is segment, switch to scene with 'scene'")
-        parser.add_argument("--target_colorspace",nargs='?',help='change the colorspace of the video, for now only supports HSV and cie-lab')
+        parser.add_argument("--target_colorspace",nargs='?',default='rgb',help='change the colorspace of the video, for now only supports HSV and cie-lab')
         args=parser.parse_args()
         ##############################################
         ## main
