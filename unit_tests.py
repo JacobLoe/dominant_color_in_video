@@ -25,46 +25,57 @@ def test_frames_mixed():
  'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
     #print(edc.extract_dominant_colors(frames))
     assert target == edc.extract_dominant_colors(frames)
-
 #def test_reduced_colors():
 #    full_colors_dict=edc.fn_rgb_to_color()
 #    target_colors_dict={}
 #    assert full_colors_dict==target_colors_dict
 #def test_bins_to_df():
-#    assert 1==1
+#    assert 1==0
+def test_change_colorspace_lab():
+    colors=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
+    target=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
+    target_list=[target,target]
+    frames=[colors,colors]
+    frames_changed=edc.change_colorspace(frames,'cie-lab')
+    assert np.array_equal(frames_changed,target_list)
+#def test_azp_path()
+#    assert 1==0
+def test_read_video_segments_output_dims():
+    assert np.shape(edc.read_video_segments('videos/red.mp4',0,9,5,'RGB'))==(9,3,5,3)
+############################################################################################
 def test_change_colorspace_rgb():
     colors=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
               [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
               [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]])
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
     target=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
               [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
               [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]])
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
     target_list=[target,target]
     frames=[colors,colors]
-    frames=edc.change_colorspace(frames,'rgb')
-    assert np.array_equal(frames,target_list)
+    frames_changed=edc.change_colorspace(frames,'rgb')
+    assert np.array_equal(frames_changed,target_list)
 def test_change_colorspace_hsv():
     colors=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
               [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
               [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]])
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
     target=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
-              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]])
+              [[0,255,255],[0,255,255],[0,255,255],[0,255,255],[0,255,255]],
+              [[120,255,255],[120,255,255],[120,255,255],[120,255,255],[120,255,255]],
+              [[0,0,128],[0,0,128],[0,0,128],[0,0,128],[0,0,128]]],dtype='uint8')
     target_list=[target,target]
     frames=[colors,colors]
-    frames=edc.change_colorspace(frames,'HSV')
-    assert np.array_equal(frames,target_list)
-    assert 1==1
-#def test_change_colorspace_lab():
-#    assert 1==1
-#def test_azp_path()
-#    assert 1==1
-def test_read_video_segments_output_dims():
-    assert np.shape(edc.read_video_segments('videos/red.mp4',0,9,5,'RGB'))==(9,3,5,3)
+    frames_changed=edc.change_colorspace(frames,'HSV')
+    assert np.array_equal(frames_changed,target_list)
+############################################################################################
 def test_full_colors_rgb():
     full_colors_dict=edc.fn_rgb_to_color('rgb','full')
     target_colors_dict={(0, 0, 0): 'black',(0, 0, 139): 'darkblue',(0, 0, 255): 'blue',(0, 100, 0): 'darkgreen',
@@ -166,5 +177,6 @@ def test_rgb_to_color_hsv():
  (174, 232, 220): 'crimson',
  (175, 63, 255): 'pink'}
     assert full_colors_dict==target_colors_dict
+############################################################################################
 if __name__ == "__main__":
    print('this does unit_tests')
