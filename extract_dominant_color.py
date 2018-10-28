@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 from tqdm import tqdm
 import os
 from skimage.color import rgb2hsv,rgb2lab
+from scipy.spatial.distance import euclidean
 #####################################################
 ## functions
 #####################################################
@@ -79,6 +80,8 @@ def extract_dominant_colors(frame_list,target_colorspace,path,what_to_process):
                for nn in nns:
                    bins[rgb_to_color[rgb_list[nn[0]]]]+=1
                i+=1
+       norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] * np.shape(frame_list[0])[2] #normalize the bins
+       bins_norm={k:v/norm_factor for k,v in bins.items()}
     else:
        for image in tqdm(frame_list): #traverse the video
            img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
@@ -86,7 +89,36 @@ def extract_dominant_colors(frame_list,target_colorspace,path,what_to_process):
            for nn in nns:
                bins[rgb_to_color[rgb_list[nn[0]]]]+=1
            i+=1
-    norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the binsi
+       norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
+       bins_norm={k:v/norm_factor for k,v in bins.items()}
+    return bins_norm
+
+def old_extract_dominant_colors(frame_list,target_colorspace,path):
+    print(str(len(frame_list))+' frames to process.')
+    rgb_to_color=fn_rgb_to_color(target_colorspace,path) #get the color dict 
+    bins={} #bins dict for histograms 
+    for rgb in rgb_to_color: #init the dict with zeros for every key
+        bins[rgb_to_color[rgb]]=0
+    rgb_list=[] #create a traverseable list of the rgb_values
+    for rgb in rgb_to_color: #map the values of the dict to a list
+        rgb_list.append(rgb)
+    i = 0
+
+    for image in tqdm(frame_list): #traverse the video
+        #flatten the image to 1d 
+        img = image.reshape((image.shape[0] * image.shape[1], 3))     
+        for pixel in img: # do nearest neighbour search on every pixel every color in the list
+            bin_aux=[]
+            #get the euclidean distance between the colors and the current pixel
+            for rgb in rgb_list:
+                bin_aux.append(euclidean(pixel,rgb))
+            # get the index of the color,which has the smallest distance, in rgb_list
+            min_pos = np.argmin(bin_aux)
+            #increment the respective color 
+            bins[rgb_to_color[rgb_list[min_pos]]]+=1
+        i+=1
+
+    norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
     bins_norm={k:v/norm_factor for k,v in bins.items()}
     return bins_norm
 ####################################################

@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 from tqdm import tqdm
 import os
 from skimage.color import rgb2hsv,rgb2lab
+from scipy.spatial.distance import euclidean
 #####################################################
 ## functions
 #####################################################

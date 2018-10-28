@@ -17,17 +17,20 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-name="dominant color extraction"
+name="HPI dominant color extraction"
 ################################
 #dominant_color libraries
 ################################
 import cv2
 import numpy as np
-#import pandas as pd
-from scipy.spatial.distance import euclidean
 from sklearn.neighbors import KDTree
 import time
 import argparse
+import zipfile
+import xml.etree.ElementTree as ET
+from tqdm import tqdm
+import os
+from skimage.color import rgb2hsv,rgb2lab
 ################################
 
 import logging
@@ -46,14 +49,49 @@ import advene.core.config as config
 import advene.util.helper as helper
 from advene.util.importer import GenericImporter
 
+
+################################################################################################################
 def register(controller=None):
     controller.register_importer(HPIImporter)
     return True
+################################################################################################################
+def extract_dominant_colors(frame_list,target_colorspace,path,what_to_process):
+    print(str(len(frame_list))+' frames to process.')
+    rgb_to_color=fn_rgb_to_color(target_colorspace,path) #get the color dict 
+    bins={} #bins dict for histograms 
+    for rgb in rgb_to_color: #init the dict with zeros for every key
+        bins[rgb_to_color[rgb]]=0
+    rgb_list=[] #create a traverseable list of the rgb_values
+    for rgb in rgb_to_color: #map the values of the dict to a list
+        rgb_list.append(rgb)
+    i = 0
 
+    kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')
+    if what_to_process=='scene':
+       for frames in tqdm(frame_list): #traverse the video
+           for image in frames:
+               img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
+               nns = kdt.query(img, k=1, return_distance=False)
+               for nn in nns:
+                   bins[rgb_to_color[rgb_list[nn[0]]]]+=1
+               i+=1
+       norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] * np.shape(frame_list[0])[2] #normalize the bins
+       bins_norm={k:v/norm_factor for k,v in bins.items()}
+    else:
+       for image in tqdm(frame_list): #traverse the video
+           img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
+           nns = kdt.query(img, k=1, return_distance=False)
+           for nn in nns:
+               bins[rgb_to_color[rgb_list[nn[0]]]]+=1
+           i+=1
+       norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
+       bins_norm={k:v/norm_factor for k,v in bins.items()}
+    return bins_norm
+################################################################################################################
 class HPIImporter(GenericImporter):
     name = _("HPI dominant color extraction")
     annotation_filter = True
-
+################################################################################################################
     def can_handle(fname):
         """Return a score between 0 and 100.
 
@@ -61,7 +99,7 @@ class HPIImporter(GenericImporter):
         """
         return 80
     can_handle=staticmethod(can_handle)
-
+################################################################################################################
     def __init__(self, author=None, package=None, defaulttype=None,
                  controller=None, callback=None, source_type=None):
         GenericImporter.__init__(self,
@@ -147,7 +185,7 @@ class HPIImporter(GenericImporter):
             dest="detected_position", default=self.detected_position,
             help=_("Use detected position for created annotations"),
             )
-
+################################################################################################################
     @staticmethod
     def can_handle(fname):
         """
@@ -156,10 +194,10 @@ class HPIImporter(GenericImporter):
             return 100
         else:
             return 0
-
+################################################################################################################
     def process_file(self, _filename):
         self.convert(self.iterator())
-
+################################################################################################################
     def check_requirements(self):
         """Check if external requirements for the importers are met.
 
@@ -187,7 +225,7 @@ class HPIImporter(GenericImporter):
             unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),
                                                                                                                 3 * len(self.source_type.annotations)))
         return unmet_requirements
-
+################################################################################################################
     def iterator(self):
         """I iterate over the created annotations.
         """
@@ -209,7 +247,7 @@ class HPIImporter(GenericImporter):
         image_scale = self.available_models.get(self.model, {}).get('image_size')
         if image_scale:
             logger.warn("Scaling images to (%d, %d) as requested by %s", image_scale, image_scale, self.model)
-
+################################################################################################################
         def get_scaled_image(t):
             """Return the image at the appropriate scale for the selected model.
             """
@@ -295,3 +333,4 @@ class HPIImporter(GenericImporter):
             }
             self.progress(progress)
             progress += step'''
+################################################################################################################

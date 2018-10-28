@@ -5,61 +5,162 @@ import extract_dominant_color as edc
 import numpy as np
 #from nose import with_setup
 ###########################################################################################################################################################
-def test_frames_scene_rgb_black():
-    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]])
-    frames=[black,black,black]
-    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
- 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
-    assert target == edc.extract_dominant_colors(frames,'rgb','full','scene')
 
-def test_frames_segment_hsv_mixed():
-    red=np.array([[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
-              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
-              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]])
-    blue=np.array([[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]])
-    frames=[red,blue,red,blue]
-    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.5,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
- 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
-    assert target == edc.extract_dominant_colors(frames,'HSV','full','segment')
 
-def test_frames_segment_cielab_mixed():
-    red=np.array([[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
-              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
-              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]])
-    blue=np.array([[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]])
-    frames=[red,blue,red,blue]
-    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.5,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
- 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
-    assert target == edc.extract_dominant_colors(frames,'cie-lab','full','segment')
-############################################################################################
 
 ############################################################################################
 #def test_bins_to_df():
 #    assert 1==0
 ############################################################################################
-
-############################################################################################
 #def test_azp_path()
 #    assert 1==0
 ############################################################################################
+# read_video_segments
+############################################################################################
 def test_read_video_segments_output_dims():
     assert np.shape(edc.read_video_segments('videos/red.mp4',0,9,5,'RGB'))==(9,3,5,3)
+############################################################################################
+# extract_dominant_colors
+############################################################################################
+def test_frames_segment_rgb_black():
+    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]],dtype='uint8')
+    frames=[black,black,black]
+    frames=edc.change_colorspace(frames,'rgb')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'rgb','full','segment')
+
+def test_frames_segment_rgb_white():
+    white=np.array([[[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]]],dtype='uint8')
+    frames=[white,white,white]
+    frames=edc.change_colorspace(frames,'rgb')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 1.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'rgb','full','segment')
+
+def test_frames_segment_rgb_mixed():
+    red=np.array([[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]],dtype='uint8')
+    blue=np.array([[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]],dtype='uint8')
+    frames=[red,blue,red,blue]
+    frames=edc.change_colorspace(frames,'rgb')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.5,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'rgb','full','segment')
+
+def test_frames_segment_hsv_black():
+    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]],dtype='uint8')
+    frames=[black,black,black]
+    frames=edc.change_colorspace(frames,'HSV')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'HSV','full','segment')
+
+def test_frames_segment_hsv_white():
+    white=np.array([[[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]]],dtype='uint8')
+    frames=[white,white,white]
+    frames=edc.change_colorspace(frames,'HSV')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 1.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'HSV','full','segment')
+
+def test_frames_segment_hsv_mixed():
+    red=np.array([[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]],dtype='uint8')
+    blue=np.array([[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]],dtype='uint8')
+    frames=[red,blue,red,blue]
+    frames=edc.change_colorspace(frames,'HSV')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.5,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'HSV','full','segment')
+
+
+def test_frames_segment_cielab_black():
+    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]],dtype='uint8')
+    frames=[black,black,black]
+    frames=edc.change_colorspace(frames,'cie-lab')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'cie-lab','full','segment')
+
+def test_frames_segment_cielab_white():
+    white=np.array([[[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]]],dtype='uint8')
+    frames=[white,white,white]
+    frames=edc.change_colorspace(frames,'cie-lab')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 1.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'cie-lab','full','segment')
+
+def test_frames_segment_cielab_mixed():
+    red=np.array([[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]],dtype='uint8')
+    blue=np.array([[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]],dtype='uint8')
+    frames=[red,blue,red,blue]
+    frames=edc.change_colorspace(frames,'cie-lab')
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.5,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(frames,'cie-lab','full','segment')
+
+
+def test_frames_scene_rgb_black():
+    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]],dtype='uint8')
+    frames=[black,black,black]
+    frames=edc.change_colorspace(frames,'rgb')
+    scene =[frames,frames]
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(scene,'rgb','full','scene')
+
+def test_frames_scene_rgb_mixed():
+    red=np.array([[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
+              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]],dtype='uint8')
+    blue=np.array([[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]],dtype='uint8')
+    frames=[red,blue,red,blue]
+    frames=edc.change_colorspace(frames,'rgb')
+    scene =[frames,frames]
+    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.5,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
+ 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
+    assert target == edc.extract_dominant_colors(scene,'rgb','full','scene')
+############################################################################################
+# change_colorspace
 ############################################################################################
 def test_change_colorspace_rgb():
     colors=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
               [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
               [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]]],dtype='uint8')
     target=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
               [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
               [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]]],dtype='uint8')
     target_list=[target,target]
     frames=[colors,colors]
     frames_changed=edc.change_colorspace(frames,'rgb')
@@ -69,11 +170,13 @@ def test_change_colorspace_hsv():
     colors=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
               [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
               [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]]],dtype='uint8')
+              [[128,128,128],[128,128,128],[128,128,128],[128,128,128],[128,128,128]],
+              [[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255]]],dtype='uint8')
     target=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
               [[0,255,255],[0,255,255],[0,255,255],[0,255,255],[0,255,255]],
               [[120,255,255],[120,255,255],[120,255,255],[120,255,255],[120,255,255]],
-              [[0,0,128],[0,0,128],[0,0,128],[0,0,128],[0,0,128]]],dtype='uint8')
+              [[0,0,128],[0,0,128],[0,0,128],[0,0,128],[0,0,128]],
+              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]],dtype='uint8')
     target_list=[target,target]
     frames=[colors,colors]
     frames_changed=edc.change_colorspace(frames,'HSV')
@@ -93,46 +196,8 @@ def test_change_colorspace_lab():
     frames_changed=edc.change_colorspace(frames,'cie-lab')
     assert np.array_equal(frames_changed,target_list)
 ############################################################################################
-def test_frames_segment_rgb_black():
-    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]])
-    frames=[black,black,black]
-    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
- 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
-    assert target == edc.extract_dominant_colors(frames,'rgb','full','segment')
-
-def test_frames_segment_hsv_black():
-    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]])
-    frames=[black,black,black]
-    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
- 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
-    assert target == edc.extract_dominant_colors(frames,'HSV','full','segment')
-
-def test_frames_segment_cielab_black():
-    black=np.array([[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-                [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]])
-    frames=[black,black,black]
-    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 1.0,'blue': 0.0,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
- 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.0,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
-    assert target == edc.extract_dominant_colors(frames,'cie-lab','full','segment')
-
-def test_frames_segment_rgb_mixed():
-    red=np.array([[[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
-              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]],
-              [[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]]])
-    blue=np.array([[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]],
-              [[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255]]])
-    frames=[red,blue,red,blue]
-    target ={'antiquewhite': 0.0,'aquamarine': 0.0,'black': 0.0,'blue': 0.5,'coral': 0.0, 'crimson': 0.0, 'cyan': 0.0, 'darkblue': 0.0,'darkcyan': 0.0, 'darkgreen': 0.0, 'darkkhaki': 0.0, 'darkolivegreen': 0.0,'darkorange': 0.0, 'darkred': 0.0, 'deeppink': 0.0, 'dimgrey': 0.0,'firebrick': 0.0, 'gold': 0.0, 'goldenrod': 0.0, 'green': 0.0,'greenyellow': 0.0, 'grey': 0.0, 'ivory': 0.0, 'khaki': 0.0,
- 'lightgrey': 0.0, 'magenta': 0.0, 'olivedrab': 0.0, 'orange': 0.0,'pink': 0.0, 'purple': 0.0, 'purple4': 0.0, 'red': 0.5,'royalblue': 0.0, 'saddlebrown': 0.0, 'salmon': 0.0, 'sandybrown': 0.0,'silver': 0.0, 'skin': 0.0, 'skyblue': 0.0, 'steelblue': 0.0,'tomato': 0.0, 'violet': 0.0, 'wheat': 0.0, 'white': 0.0, 'yellow': 0.0}
-    assert target == edc.extract_dominant_colors(frames,'rgb','full','segment')
-
-############################################################################################
+# fn_rgb_to_color
+#############################################################################################
 def test_reduced_colors():
     full_colors_dict=edc.fn_rgb_to_color('rgb','colors')
     target_colors_dict={}
@@ -143,8 +208,51 @@ def test_reduced_colors():
 
 def test_full_colors_rgb():
     full_colors_dict=edc.fn_rgb_to_color('rgb','full')
-    target_colors_dict={(0, 0, 0): 'black',(0, 0, 139): 'darkblue',(0, 0, 255): 'blue',(0, 100, 0): 'darkgreen',
- (0, 128, 0): 'green',(0, 139, 139): 'darkcyan',(0, 255, 255): 'cyan',(28, 128, 128): 'grey',(65, 105, 225): 'royalblue',(70, 130, 180): 'steelblue',(85, 107, 47): 'darkolivegreen',(105, 105, 105): 'dimgrey',(107, 142, 35): 'olivedrab',(127, 255, 212): 'aquamarine',(128, 0, 128): 'purple',(135, 206, 235): 'skyblue',(139, 0, 0): 'darkred',(139, 69, 19): 'saddlebrown',(147, 112, 219): 'purple4',(173, 255, 47): 'greenyellow',(178, 34, 34): 'firebrick',(189, 183, 107): 'darkkhaki',(192, 192, 192): 'silver',(211, 211, 211): 'lightgrey',(218, 165, 32): 'goldenrod',(220, 20, 60): 'crimson',(238, 130, 238): 'violet',(240, 230, 140): 'khaki',(244, 164, 96): 'sandybrown',(245, 222, 179): 'wheat',(250, 128, 114): 'salmon',(250, 235, 215): 'antiquewhite',(255, 0, 0): 'red',(255, 0, 255): 'magenta',(255, 20, 147): 'deeppink',(255, 99, 71): 'tomato',(255, 127, 80): 'coral',(255, 140, 0): 'darkorange',(255, 165, 0): 'orange',(255, 192, 203): 'pink',(255, 215, 0): 'gold',(255, 224, 189): 'skin',(255, 255, 0): 'yellow',(255, 255, 240): 'ivory',(255, 255, 255): 'white'}
+    target_colors_dict={(0, 0, 0): 'black',
+(0, 0, 139): 'darkblue',
+(0, 0, 255): 'blue',
+(0, 100, 0): 'darkgreen',
+(0, 128, 0): 'green',
+(0, 139, 139): 'darkcyan',
+(0, 255, 255): 'cyan',
+(28, 128, 128): 'grey',
+(65, 105, 225): 'royalblue',
+(70, 130, 180): 'steelblue',
+(85, 107, 47): 'darkolivegreen',
+(105, 105, 105): 'dimgrey',
+(107, 142, 35): 'olivedrab',
+(127, 255, 212): 'aquamarine',
+(128, 0, 128): 'purple',
+(135, 206, 235): 'skyblue',
+(139, 0, 0): 'darkred',
+(139, 69, 19): 'saddlebrown',
+(147, 112, 219): 'purple4',
+(173, 255, 47): 'greenyellow',
+(178, 34, 34): 'firebrick',
+(189, 183, 107): 'darkkhaki',
+(192, 192, 192): 'silver',
+(211, 211, 211): 'lightgrey',
+(218, 165, 32): 'goldenrod',
+(220, 20, 60): 'crimson',
+(238, 130, 238): 'violet',
+(240, 230, 140): 'khaki',
+(244, 164, 96): 'sandybrown',
+(245, 222, 179): 'wheat',
+(250, 128, 114): 'salmon',
+(250, 235, 215): 'antiquewhite',
+(255, 0, 0): 'red',
+(255, 0, 255): 'magenta',
+(255, 20, 147): 'deeppink',
+(255, 99, 71): 'tomato',
+(255, 127, 80): 'coral',
+(255, 140, 0): 'darkorange',
+(255, 165, 0): 'orange',
+(255, 192, 203): 'pink',
+(255, 215, 0): 'gold',
+(255, 224, 189): 'skin',
+(255, 255, 0): 'yellow',
+(255, 255, 240): 'ivory',
+(255, 255, 255): 'white'}
     assert full_colors_dict==target_colors_dict
 
 def test_rgb_to_color_lab():
