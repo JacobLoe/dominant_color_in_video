@@ -55,39 +55,6 @@ def register(controller=None):
     controller.register_importer(HPIImporter)
     return True
 ################################################################################################################
-def extract_dominant_colors(frame_list,target_colorspace,path,what_to_process):
-    print(str(len(frame_list))+' frames to process.')
-    rgb_to_color=fn_rgb_to_color(target_colorspace,path) #get the color dict 
-    bins={} #bins dict for histograms 
-    for rgb in rgb_to_color: #init the dict with zeros for every key
-        bins[rgb_to_color[rgb]]=0
-    rgb_list=[] #create a traverseable list of the rgb_values
-    for rgb in rgb_to_color: #map the values of the dict to a list
-        rgb_list.append(rgb)
-    i = 0
-
-    kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')
-    if what_to_process=='scene':
-       for frames in tqdm(frame_list): #traverse the video
-           for image in frames:
-               img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
-               nns = kdt.query(img, k=1, return_distance=False)
-               for nn in nns:
-                   bins[rgb_to_color[rgb_list[nn[0]]]]+=1
-               i+=1
-       norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] * np.shape(frame_list[0])[2] #normalize the bins
-       bins_norm={k:v/norm_factor for k,v in bins.items()}
-    else:
-       for image in tqdm(frame_list): #traverse the video
-           img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
-           nns = kdt.query(img, k=1, return_distance=False)
-           for nn in nns:
-               bins[rgb_to_color[rgb_list[nn[0]]]]+=1
-           i+=1
-       norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
-       bins_norm={k:v/norm_factor for k,v in bins.items()}
-    return bins_norm
-################################################################################################################
 class HPIImporter(GenericImporter):
     name = _("HPI dominant color extraction")
     annotation_filter = True
@@ -130,6 +97,9 @@ class HPIImporter(GenericImporter):
         self.url = self.get_preferences().get('url', 'http://localhost:9000/')
 
         self.server_options = {}
+
+
+#commenting/removing this row hides the script in advene
         # Populate available models options from server
         try:
             r = requests.get(self.url)
@@ -146,6 +116,9 @@ class HPIImporter(GenericImporter):
                             ", ".join(item['id'] for item in self.server_options['available_models']))
         except requests.exceptions.RequestException:
             pass
+
+
+#moving this row hides the script in advene
         if 'available_models' in self.server_options:
             self.available_models = OrderedDict((item['id'], item) for item in self.server_options['available_models'])
         else:
@@ -159,11 +132,6 @@ class HPIImporter(GenericImporter):
             choices=[at.id for at in self.controller.package.annotationTypes],
             default=self.source_type_id,
             help=_("Type of annotation to analyze"),
-            )
-        self.optionparser.add_option(
-            "-u", "--url", action="store", type="string",
-            dest="url", default=self.url,
-            help=_("URL of the webservice"),
             )
         self.optionparser.add_option(
             "-w", "--resolution_width", action="store", type="int",
@@ -243,27 +211,31 @@ class HPIImporter(GenericImporter):
             new_atype.mimetype = 'application/json'
             new_atype.setMetaData(config.data.namespace, "representation",
                                   'here/content/parsed/label')
+        ################################################################################################################
+        def extract_dominant_colors(frame_list,target_colorspace,path,what_to_process):
+            print(str(len(frame_list))+' frames to process.')
+            rgb_to_color=fn_rgb_to_color(target_colorspace,path) #get the color dict 
+            bins={} #bins dict for histograms 
+            for rgb in rgb_to_color: #init the dict with zeros for every key
+                bins[rgb_to_color[rgb]]=0
+            rgb_list=[] #create a traverseable list of the rgb_values
+            for rgb in rgb_to_color: #map the values of the dict to a list
+                rgb_list.append(rgb)
 
-        image_scale = self.available_models.get(self.model, {}).get('image_size')
-        if image_scale:
-            logger.warn("Scaling images to (%d, %d) as requested by %s", image_scale, image_scale, self.model)
-################################################################################################################
-        def get_scaled_image(t):
-            """Return the image at the appropriate scale for the selected model.
-            """
-            original = bytes(self.controller.package.imagecache.get(t))
-            if image_scale:
-                im = Image.open(BytesIO(original))
-                im = im.resize((image_scale, image_scale))
-                buf = BytesIO()
-                im.save(buf, 'PNG')
-                scaled = buf.getvalue()
-                buf.close()
-            else:
-                scaled = original
-            return scaled
+            kdt = KDTree(rgb_list, leaf_size=30, metric='euclidean')
+            if what_to_process=='scene':
+               for image in frame_list: #traverse the video
+                   img = image.reshape((image.shape[0] * image.shape[1], 3)) #flatten the image to 1d   
+                   nns = kdt.query(img, k=1, return_distance=False)
+                   for nn in nns:
+                       bins[rgb_to_color[rgb_list[nn[0]]]]+=1
+               norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
+               bins_norm={k:v/norm_factor for k,v in bins.items()}
+            return bins_norm
+        ################################################################################################################
         # Use a requests.session to use a KeepAlive connection to the server
         session = requests.session()
+
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
         response = session.post(self.url, headers=headers, json={
             "model": self.model,
@@ -274,18 +246,13 @@ class HPIImporter(GenericImporter):
                 { 'annotationid': a.id,
                   'begin': a.fragment.begin,
                   'end': a.fragment.end,
-                  'frames': [
-                      {
-                          'screenshot': base64.encodebytes(get_scaled_image(t)).decode('ascii'),
-                          'timecode': t
-                      } for t in (a.fragment.begin,
-                                  int((a.fragment.begin + a.fragment.end) / 2),
-                                  a.fragment.end)
-                  ]
+                  'dominant_colors': ['Test','test']
                 }
                 for a in self.source_type.annotations
             ]
         })
+
+
         output = response.json()
         if output.get('status') != 200:
             # Not OK result. Display error message.
@@ -308,7 +275,7 @@ class HPIImporter(GenericImporter):
                 'end': end,
                 'content': json.dumps(dominant_colors),
             }
-'''            a = self.package.get_element_by_id(item['annotationid'])
+            a = self.package.get_element_by_id(item['annotationid'])
             if self.detected_position:
                 begin = item['timecode']
             else:
@@ -332,5 +299,5 @@ class HPIImporter(GenericImporter):
                 'content': json.dumps(item),
             }
             self.progress(progress)
-            progress += step'''
+            progress += step
 ################################################################################################################
