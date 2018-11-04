@@ -50,15 +50,18 @@ def change_colorspace(frame_list,target_colorspace):
     if target_colorspace=='HSV':
         print('HSV')
         for frame in frame_list:
-            changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_RGB2HSV))
+            changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV))
         return changed_frame_list
     if target_colorspace=='cie-lab':
         print('cie-lab')
         for frame in frame_list:
-            changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_RGB2LAB))
+            changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_BGR2LAB))
         return changed_frame_list
     else:
-        return frame_list
+        print('rgb')
+        for frame in frame_list:
+            changed_frame_list.append(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        return changed_frame_list
 ##################################################
 def extract_dominant_colors(frame_list,target_colorspace,path,what_to_process):
     print(str(len(frame_list))+' frames to process.')
