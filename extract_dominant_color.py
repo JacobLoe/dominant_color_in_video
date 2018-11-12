@@ -240,7 +240,7 @@ def read_azp(azp_path,output_path):
                                 segment_list.append(read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace))
                             if args.what_to_process=='segment': #if 'segment' is selected run extract_dominant_colors on the segment
                                 segment = read_video_segments(args.video_path,begin,end,args.resolution_width,args.target_colorspace)
-                                colors_df = bins_to_df(extract_dominant_colors(segment,args.target_colorspace,args.path,args.what_to_process),args.bin_threshold,args.colors_to_return)
+                                colors_df = bins_to_df(extract_dominant_colors(segment,args.target_colorspace,args.colors_txt,args.what_to_process),args.bin_threshold,args.colors_to_return)
                                 colors_list=[]
                                 for color,perc in zip(colors_df.index.values,colors_df.values.tolist()):
                                     app=str(color)+str(' ')+str(perc)
@@ -248,7 +248,7 @@ def read_azp(azp_path,output_path):
                                 print(str(child2.get('begin')),str(child2.get('end')),colors_list)
                                 file.write(str(child2.get('begin'))+' '+str(child2.get('end'))+' '+str(colors_list)+'\n') #write the timestamp and the extracted colors to file
             if args.what_to_process=='scene': #if 'scene' is selected run extract_dominant_colors on the the list of segments
-                colors_df = bins_to_df(extract_dominant_colors(segment_list,args.target_colorspace,args.path,args.what_to_process),args.bin_threshold,args.colors_to_return)
+                colors_df = bins_to_df(extract_dominant_colors(segment_list,args.target_colorspace,args.colors_txt,args.what_to_process),args.bin_threshold,args.colors_to_return)
                 colors_list=[]
                 for color,perc in zip(colors_df.index.values,colors_df.values.tolist()):
                     app=str(color)+str(' ')+str(perc)
