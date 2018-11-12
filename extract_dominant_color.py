@@ -265,7 +265,7 @@ def azp_path(path,output_path):
         #print('as')
         for index,azp_path in enumerate(path):
             #print(azp_path)
-            name=output_path+'_'+azp_path[-:]
+            name=output_path+'_'+azp_path[-4:]
             read_azp(azp_path,name)
     else: #else it is assumed the path points to a directory
         directory_content = os.listdir(path)
@@ -277,7 +277,6 @@ def azp_path(path,output_path):
                 else: #else, add a '/' and then the .azp-file
                     azp_list.append(path+'/'+elem)
         for azp_path in azp_list:
-
             read_azp(azp_path,output_path)
         #print('planned')
 ######################################################
