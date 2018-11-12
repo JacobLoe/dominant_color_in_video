@@ -218,7 +218,7 @@ def fn_rgb_to_color(target_colorspace,path):
     #skin is caucasian        
     return rgb_to_color
 ######################################################
-def read_azp(azp_path):
+def read_azp(azp_path,output_path):
     #extract the .azp-file to /tmp
     zip_ref = zipfile.ZipFile(azp_path)
     zip_ref.extractall('/tmp')
@@ -226,7 +226,7 @@ def read_azp(azp_path):
     tree = ET.parse('/tmp/content.xml')
     root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
     #traverse the .xml-file
-    with open(args.output_path,'w') as file:
+    with open(output_path,'w') as file:
             if args.what_to_process=='scene':
                 segment_list=[]
             for child in root[0].iter():
@@ -257,15 +257,16 @@ def read_azp(azp_path):
                 file.write(str(colors_list)+'\n') #write the extracted colors to file
             file.close()
 ######################################################
-def azp_path(path):
+def azp_path(path,output_path):
     if path[-4:] == '.azp': #if the path is to a single file
-        print('exactly')
-        read_azp(path)
+        #print('exactly')
+        read_azp(path,output_path)
     elif path[0][-4:] == '.azp': #if the path is to several files
-        print('as')
-        for azp_path in path:
+        #print('as')
+        for index,azp_path in enumerate(path):
             #print(azp_path)
-            read_azp(azp_path)
+            name=output_path+'_'+azp_path[-:]
+            read_azp(azp_path,name)
     else: #else it is assumed the path points to a directory
         directory_content = os.listdir(path)
         azp_list=[]
@@ -276,8 +277,9 @@ def azp_path(path):
                 else: #else, add a '/' and then the .azp-file
                     azp_list.append(path+'/'+elem)
         for azp_path in azp_list:
-            read_azp(azp_path)
-        print('planned')
+
+            read_azp(azp_path,output_path)
+        #print('planned')
 ######################################################
 if __name__ == "__main__":
         ##############################################
@@ -299,5 +301,5 @@ if __name__ == "__main__":
         ##############################################
         ## main
         ##############################################
-        azp_path(args.azp_path)
+        azp_path(args.azp_path,args.output_path)
         print('done')

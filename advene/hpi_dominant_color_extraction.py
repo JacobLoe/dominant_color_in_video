@@ -24,13 +24,6 @@ name="HPI dominant color extraction"
 import cv2
 import numpy as np
 from sklearn.neighbors import KDTree
-import time
-import argparse
-import zipfile
-import xml.etree.ElementTree as ET
-from tqdm import tqdm
-import os
-from skimage.color import rgb2hsv,rgb2lab
 ################################
 
 import logging
@@ -94,38 +87,36 @@ class HPIImporter(GenericImporter):
         self.confidence = 0.0
         self.detected_position = True
         self.split_types = False
-        self.url = self.get_preferences().get('url', 'http://localhost:9000/')
+        #self.url = self.get_preferences().get('url', 'http://localhost:9000/')
 
         self.server_options = {}
 
 
-#commenting/removing this row hides the script in advene
         # Populate available models options from server
-        try:
-            r = requests.get(self.url)
-            if r.status_code == 200:
-                # OK. We should have some server options available as json
-                data = r.json()
-                caps = data.get('data', {}).get('capabilities', {})
-                for n in ('minimum_batch_size', 'maximum_batch_size', 'available_models'):
-                    self.server_options[n] = caps.get(n, None)
-                logger.warn("Got capabilities from VCD server - batch size in (%d, %d) - %d models: %s",
-                            self.server_options['minimum_batch_size'],
-                            self.server_options['maximum_batch_size'],
-                            len(self.server_options['available_models']),
-                            ", ".join(item['id'] for item in self.server_options['available_models']))
-        except requests.exceptions.RequestException:
-            pass
+        #try:
+        #    r = requests.get(self.url)
+        #    if r.status_code == 200:
+        #        # OK. We should have some server options available as json
+        #        data = r.json()
+        #        caps = data.get('data', {}).get('capabilities', {})
+        #        for n in ('minimum_batch_size', 'maximum_batch_size', 'available_models'):
+        #            self.server_options[n] = caps.get(n, None)
+        #        logger.warn("Got capabilities from VCD server - batch size in (%d, %d) - %d models: %s",
+        #                    self.server_options['minimum_batch_size'],
+        #                    self.server_options['maximum_batch_size'],
+        #                    len(self.server_options['available_models']),
+        #                    ", ".join(item['id'] for item in self.server_options['available_models']))
+        #except requests.exceptions.RequestException:
+        #    pass
 
 
-#moving this row hides the script in advene
-        if 'available_models' in self.server_options:
-            self.available_models = OrderedDict((item['id'], item) for item in self.server_options['available_models'])
-        else:
-            self.available_models = OrderedDict()
-            self.available_models["standard"] = { 'id': "standard",
-                                                  'label': "Standard",
-                                                  'image_size': 224 }
+        #if 'available_models' in self.server_options:
+        #    self.available_models = OrderedDict((item['id'], item) for item in self.server_options['available_models'])
+        #else:
+        #    self.available_models = OrderedDict()
+        #    self.available_models["standard"] = { 'id': "standard",
+        #                                          'label': "Standard",
+        #                                          'image_size': 224 }
 
         self.optionparser.add_option(
             "-t", "--source-type-id", action="store", type="choice", dest="source_type_id",
@@ -176,28 +167,28 @@ class HPIImporter(GenericImporter):
         unmet_requirements = []
 
         # Check server connectivity
-        try:
-            requests.get(self.url)
-        except requests.exceptions.RequestException:
-            unmet_requirements.append(_("Cannot connect to VCD server. Check that it is running and accessible."))
+        #try:
+        #    requests.get(self.url)
+        #except requests.exceptions.RequestException:
+        #    unmet_requirements.append(_("Cannot connect to VCD server. Check that it is running and accessible."))
 
         # Make sure that we have all appropriate screenshots
-        missing_screenshots = set()
-        for a in self.source_type.annotations:
-            for t in (a.fragment.begin,
-                      int((a.fragment.begin + a.fragment.end) / 2),
-                      a.fragment.end):
-                if self.controller.get_snapshot(annotation=a, position=t).is_default:
-                    missing_screenshots.add(t)
-        if len(missing_screenshots) > 0:
-            unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),
-                                                                                                                3 * len(self.source_type.annotations)))
+       # missing_screenshots = set()
+       # for a in self.source_type.annotations:
+       #     for t in (a.fragment.begin,
+       #               int((a.fragment.begin + a.fragment.end) / 2),
+       #               a.fragment.end):
+       #         if self.controller.get_snapshot(annotation=a, position=t).is_default:
+       #             missing_screenshots.add(t)
+       # if len(missing_screenshots) > 0:
+       #     unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),
+       #                                                                                                         3 * len(self.source_type.annotations)))
         return unmet_requirements
 ################################################################################################################
     def iterator(self):
         """I iterate over the created annotations.
         """
-        logger.warn("Importing using %s model", self.model)
+        #logger.warn("Importing using %s model", self.model)
         self.source_type = self.controller.package.get_element_by_id(self.source_type_id)
 
         self.progress(.1, "Sending request to server")
@@ -237,11 +228,10 @@ class HPIImporter(GenericImporter):
         session = requests.session()
 
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
-        response = session.post(self.url, headers=headers, json={
-            "model": self.model,
-            'media_uri': self.package.uri,
+        response = session.post(headers=headers, json={
+            "model": 'self.model',
+            'media_uri': 'self.package.uri',
             'media_filename': self.controller.get_default_media(),
-            'minimum_confidence': minconf,
             'annotations': [
                 { 'annotationid': a.id,
                   'begin': a.fragment.begin,
