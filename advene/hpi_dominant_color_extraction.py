@@ -255,6 +255,7 @@ class HPIImporter(GenericImporter):
                 assert np.shape(scaled)==np.shape(scaled2)
                 print('很好')
                 break
+            break
 
         def fn_rgb_to_color(target_colorspace,path):
             if (path != 'full'):
@@ -339,7 +340,7 @@ class HPIImporter(GenericImporter):
             #skin is caucasian        
             return rgb_to_color
 
-
+#fixme: use the option parser for bin_threshold, not the hardcoded value
         def extract_dominant_colors(frame_list,target_colorspace,path):
             print(str(len(frame_list))+' frames to process.')
             print('frame_list_shape:', np.shape(frame_list) )
@@ -360,8 +361,18 @@ class HPIImporter(GenericImporter):
             norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the binsi
             bins_norm={k:v/norm_factor for k,v in bins.items()}
 
-#fixme: returns the whole histogramm, not the top five
-            return bins_norm
+            bin_threshold = 5
+            colors_to_return = 5
+            #create a dataframe, sorted descending by count
+            bins_sorted = sorted(list(zip(list(bins_norm.values()),list(bins_norm.keys()))),reverse=True)
+            bin_threshold = 5 #in percent
+            # colors_to_return = 5  #no clue right how to implent this
+            bins_sieved_dict={}
+            for value,color in bins_sorted:
+                if value > bin_threshold/100:
+                    bins_sieved_dict[color]=value
+            return bins_sieved_dict
+
 
         response = {
             "model": 'self.model',
@@ -380,7 +391,7 @@ class HPIImporter(GenericImporter):
         }
 
         output = json.dumps(response)
-        print('很好'output)
+        print('很好',output)
         
         #concepts = output.get('data', {}).get('concepts', [])
         progress = .2
