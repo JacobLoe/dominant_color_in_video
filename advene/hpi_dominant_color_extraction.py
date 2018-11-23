@@ -383,6 +383,7 @@ class HPIImporter(GenericImporter):
                   'begin': a.fragment.begin,
                   'end': a.fragment.end,
                   'dominant_colors': extract_dominant_colors([cv2.imdecode(np.fromstring(get_scaled_image(a.fragment.begin),dtype='uint8'),1).reshape(image_scale,image_scale,3),
+                                                                  cv2.imdecode(np.fromstring(get_scaled_image((a.fragment.begin+a.fragment.end)/2),dtype='uint8'),1).reshape(image_scale,image_scale,3),
                                                                   cv2.imdecode(np.fromstring(get_scaled_image(a.fragment.end),dtype='uint8'),1).reshape(image_scale,image_scale,3)
                                                                   ],'rgb','full')
                 }
@@ -393,47 +394,46 @@ class HPIImporter(GenericImporter):
         output = json.dumps(response)
         print('很好',output)
         
+        #print('3333333333333333333333333')
+        #print('response: ',response)
+        #print('annotations: ',response['annotations'])
+
+
         #concepts = output.get('data', {}).get('concepts', [])
         progress = .2
         step = .8 / (len(output) or 1)
-        self.progress(.2, _("Parsing %d results") % len(concepts))
+        #self.progress(.2, _("Parsing %d results") % len(concepts))
         #logger.warn(_("Parsing %d results (level %f)") % (len(concepts), self.confidence))
 
-# fixme: iterate over output or merge with json loop
-        for item in concepts: 
-
+        for annotation in response['annotations']: 
+            a = self.package.get_element_by_id(annotation['annotationid'])
+#            if self.detected_position:
+#                begin = item['timecode']
+#            else:
+#                begin = a.fragment.begin
+#            end = a.fragment.end
+#            label = item.get('label')
+#            label_id = helper.title2id(label)
             
-            a = self.package.get_element_by_id(item['annotationid'])
-            if self.detected_position:
-                begin = item['timecode']
-            else:
-                begin = a.fragment.begin
-            end = a.fragment.end
-            label = item.get('label')
-            label_id = helper.title2id(label)
-            
-            print('5555555555555555555555555555555555555')
 
-            if label and self.split_types:
-                new_atype = new_atypes.get(label_id)
-                if new_atype is None:
-                   # Not defined yet. Create a new one.
-                   new_atype = self.ensure_new_type(label_id, title = _("%s concept" % label))
-                   new_atype.mimetype = 'application/json'
-                   new_atype.setMetaData(config.data.namespace, "representation",
-                                         'here/content/parsed/label')
-                   new_atypes[label_id] = new_atype
+#            if label and self.split_types:
+#                new_atype = new_atypes.get(label_id)
+#                if new_atype is None:
+#                   # Not defined yet. Create a new one.
+#                   new_atype = self.ensure_new_type(label_id, title = _("%s concept" % label))
+#                   new_atype.mimetype = 'application/json'
+#                   new_atype.setMetaData(config.data.namespace, "representation",
+#                                         'here/content/parsed/label')
+#                   new_atypes[label_id] = new_atype
 
-            print('6666666666666666666666666666666666666666666')
-
+#            print('444444444444444444444444')
+#            print('annotation: ',annotation)
             an = yield {
-                'type': new_atype,
-                'begin': begin,
-                'end': end,
-                'content': json.dumps(item),
+                'type': new_atype,#'dominant_color_extraction',#new_atype,
+                'begin': annotation['begin'],
+                'end': annotation['end'],
+                'content': json.dumps(annotation['dominant_colors'])
             }
-
-            print('7777777777777777777777777777777777777777777777')
 
             if an is not None and self.create_relations:
                 r = self.package.createRelation(
