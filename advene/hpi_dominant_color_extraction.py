@@ -237,26 +237,6 @@ class HPIImporter(GenericImporter):
                 scaled = original
             return scaled
 
-        for a in self.source_type.annotations:
-            for t in (a.fragment.begin,int((a.fragment.begin + a.fragment.end) / 2),a.fragment.end):
-                scaled = get_scaled_image(t)
-                #scaled = base64.encodebytes(scaled).decode('ascii')
-                scaled = np.fromstring(scaled,dtype='uint8')
-                scaled = cv2.imdecode(scaled,1)
-                print('imdecode: ',type(scaled))
-                print('imdecode_shape: ',np.shape(scaled),'\n')
-
-                scaled = scaled.reshape(image_scale,image_scale,3)
-                print('reshape_type: ', type(scaled))
-                print('reshape_shape',np.shape(scaled),'\n')
-
-                scaled2=cv2.imdecode(np.fromstring(get_scaled_image(t),dtype='uint8'),1).reshape(image_scale,image_scale,3)
-                assert type(scaled)==type(scaled2)
-                assert np.shape(scaled)==np.shape(scaled2)
-                print('很好')
-                break
-            break
-
         def fn_rgb_to_color(target_colorspace,path):
             if (path != 'full'):
                 colors = {}
@@ -366,74 +346,42 @@ class HPIImporter(GenericImporter):
             #create a dataframe, sorted descending by count
             bins_sorted = sorted(list(zip(list(bins_norm.values()),list(bins_norm.keys()))),reverse=True)
             bin_threshold = 5 #in percent
-            # colors_to_return = 5  #no clue right how to implent this
+            # colors_to_return = 5  #no clue right how to implement this
             bins_sieved_dict={}
             for value,color in bins_sorted:
                 if value > bin_threshold/100:
                     bins_sieved_dict[color]=value
             return bins_sieved_dict
 
-
         response = {
             "model": 'self.model',
             'media_uri': 'self.package.uri',
             'media_filename': self.controller.get_default_media(),
-            'annotations': [
-                { 'annotationid': a.id,
-                  'begin': a.fragment.begin,
-                  'end': a.fragment.end,
-                  'dominant_colors': extract_dominant_colors([cv2.imdecode(np.fromstring(get_scaled_image(a.fragment.begin),dtype='uint8'),1).reshape(image_scale,image_scale,3),
-                                                                  cv2.imdecode(np.fromstring(get_scaled_image((a.fragment.begin+a.fragment.end)/2),dtype='uint8'),1).reshape(image_scale,image_scale,3),
-                                                                  cv2.imdecode(np.fromstring(get_scaled_image(a.fragment.end),dtype='uint8'),1).reshape(image_scale,image_scale,3)
-                                                                  ],'rgb','full')
-                }
-                for a in self.source_type.annotations
-           ]
-        }
+            'annotations': []}
 
-        output = json.dumps(response)
-        print('很好',output)
-        
-        #print('3333333333333333333333333')
-        #print('response: ',response)
-        #print('annotations: ',response['annotations'])
-
-
-        #concepts = output.get('data', {}).get('concepts', [])
         progress = .2
-        step = .8 / (len(output) or 1)
-        #self.progress(.2, _("Parsing %d results") % len(concepts))
-        #logger.warn(_("Parsing %d results (level %f)") % (len(concepts), self.confidence))
+        #step = .8 / (len(output) or 1)
 
-        for annotation in response['annotations']: 
-            a = self.package.get_element_by_id(annotation['annotationid'])
-#            if self.detected_position:
-#                begin = item['timecode']
-#            else:
-#                begin = a.fragment.begin
-#            end = a.fragment.end
-#            label = item.get('label')
-#            label_id = helper.title2id(label)
-            
+        for anno in self.source_type.annotations:
+            frame_list=[cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.begin),dtype='uint8'),1).reshape(image_scale,image_scale,3),
+                        cv2.imdecode(np.fromstring(get_scaled_image((anno.fragment.begin+a.fragment.end)/2),dtype='uint8'),1).reshape(image_scale,image_scale,3),
+                        cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.end),dtype='uint8'),1).reshape(image_scale,image_scale,3)]
+#            for ts in range(a.fragment.end):
+#                if ts>a.fragment.begin and ts%8==0:
+#                   timestamps.append(cv2.imdecode(np.fromstring(get_scaled_image(ts),dtype='uint8'),1).reshape(image_scale,image_scale,3))
+            annotations = { 'annotationid': anno.id,
+                            'begin': anno.fragment.begin,
+                            'end': anno.fragment.end,
+                            'dominant_colors': extract_dominant_colors(frame_list,'rgb','full')}
+            response['annotations'].append(annotations)
 
-#            if label and self.split_types:
-#                new_atype = new_atypes.get(label_id)
-#                if new_atype is None:
-#                   # Not defined yet. Create a new one.
-#                   new_atype = self.ensure_new_type(label_id, title = _("%s concept" % label))
-#                   new_atype.mimetype = 'application/json'
-#                   new_atype.setMetaData(config.data.namespace, "representation",
-#                                         'here/content/parsed/label')
-#                   new_atypes[label_id] = new_atype
+            a = self.package.get_element_by_id(annotations['annotationid'])
 
-#            print('444444444444444444444444')
-#            print('annotation: ',annotation)
             an = yield {
-                'type': new_atype,#'dominant_color_extraction',#new_atype,
-                'begin': annotation['begin'],
-                'end': annotation['end'],
-                'content': json.dumps(annotation['dominant_colors'])
-            }
+                'type': new_atype,
+                'begin': anno.fragment.begin,
+                'end': anno.fragment.end,
+                'content': json.dumps(annotations['dominant_colors'])}
 
             if an is not None and self.create_relations:
                 r = self.package.createRelation(
@@ -446,5 +394,6 @@ class HPIImporter(GenericImporter):
                 self.package.relations.append(r)
                 self.update_statistics('relation')
             self.progress(progress)
-            progress += step
-################################################################################################################
+            #progress += step
+
+        output = json.dumps(response)
