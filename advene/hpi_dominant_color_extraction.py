@@ -78,9 +78,9 @@ class HPIImporter(GenericImporter):
             # the filter options.
             self.get_preferences().update({'source_type_id': self.source_type_id})
         ##################################
-        self.resolution_width=0
-        self.bin_threshold=0.0
-        self.colors_to_return=0
+        self.resolution_width=200
+        self.bin_threshold=5.0
+        self.colors_to_return=5
         #################################
         self.model = "standard"
         self.confidence = 0.0
@@ -89,35 +89,10 @@ class HPIImporter(GenericImporter):
         self.create_relations = False
         self.split_types = False
 
-        self.server_options = {}
-
-        self.url = 0
-
-        # Populate available models options from server
-        #try:
-        #    r = requests.get(self.url)
-        #    if r.status_code == 200:
-        #        # OK. We should have some server options available as json
-        #        data = r.json()
-        #        caps = data.get('data', {}).get('capabilities', {})
-        #        for n in ('minimum_batch_size', 'maximum_batch_size', 'available_models'):
-        #            self.server_options[n] = caps.get(n, None)
-        #        logger.warn("Got capabilities from VCD server - batch size in (%d, %d) - %d models: %s",
-        #                    self.server_options['minimum_batch_size'],
-        #                    self.server_options['maximum_batch_size'],
-        #                    len(self.server_options['available_models']),
-        #                    ", ".join(item['id'] for item in self.server_options['available_models']))
-        #except requests.exceptions.RequestException:
-        #    pass
-
-
-        #if 'available_models' in self.server_options:
-        #    self.available_models = OrderedDict((item['id'], item) for item in self.server_options['available_models'])
-        #else:
-        #    self.available_models = OrderedDict()
-        #    self.available_models["standard"] = { 'id': "standard",
-        #                                          'label': "Standard",
-        #                                          'image_size': 224 }
+        self.available_models = OrderedDict()
+        self.available_models["standard"] = { 'id': "standard",
+                                               'label': "Standard",
+                                               'image_size': 224 }
 
         self.optionparser.add_option(
             "-t", "--source-type-id", action="store", type="choice", dest="source_type_id",
@@ -127,17 +102,17 @@ class HPIImporter(GenericImporter):
             )
         self.optionparser.add_option(
             "-w", "--resolution_width", action="store", type="int",
-            dest="resolution_width", default=200,
-            help=_("set the resolution width of the videofile, the resolution scales automatically to 16:9"),
+            dest="resolution_width", default=self.resolution_width,
+            help=_("set the scale with which the frames are extracted, default 200"),
             )
         self.optionparser.add_option(
             "-b", "--bin_threshold", action="store", type="float",
-            dest="bin_threshold", default=5.0,
+            dest="bin_threshold", default=self.bin_threshold,
             help=_("set the percentage (0-100) a color has to reach to be returned,default 5"),
             )
         self.optionparser.add_option(
             "-c", "--colors_to_return", action="store", type="int",
-            dest="colors_to_return", default=5,
+            dest="colors_to_return", default=self.colors_to_return,
             help=_("set how many colors should be returned at maximum,default 5"),
             )
         self.optionparser.add_option(
@@ -174,24 +149,28 @@ class HPIImporter(GenericImporter):
         #except requests.exceptions.RequestException:
         #    unmet_requirements.append(_("Cannot connect to VCD server. Check that it is running and accessible."))
 
+
+#fixme: if this is uncommented, advene creates the error 'filter not ready. X screenshots missing'. I have not yet found where the error is created.
         # Make sure that we have all appropriate screenshots
-        #missing_screenshots = set()
-        #for a in self.source_type.annotations:
-        #    for t in (a.fragment.begin,
-        #              int((a.fragment.begin + a.fragment.end) / 2),
-        #              a.fragment.end):
-        #        if self.controller.get_snapshot(annotation=a, position=t).is_default:
-        #            missing_screenshots.add(t)
-        #if len(missing_screenshots) > 0:
-        #    unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),3 * len(self.source_type.annotations)))
+#        missing_screenshots = set()
+#        for a in self.source_type.annotations:
+#            for t in (a.fragment.begin,
+#                      int((a.fragment.begin + a.fragment.end) / 2),
+#                      a.fragment.end):
+#                if self.controller.get_snapshot(annotation=a, position=t).is_default:
+#                    missing_screenshots.add(t)
+#        if len(missing_screenshots) > 0:
+#            unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),3 * len(self.source_type.annotations)))
         return unmet_requirements
 ################################################################################################################
     def iterator(self):
-        print('11111111111111111111111')
         """I iterate over the created annotations.
         """
-        print('self.controller.package:  ',self.controller.package)
 
+        print('resolution_width: ', self.resolution_width)
+        print('colors_to_return: ', self.colors_to_return)
+        print('bin_threshold: ', self.bin_threshold)
+        self.progress(.1, "Sending request to server")
         if self.split_types:
             # Dict indexed by entity type name
             new_atypes = {}
@@ -219,13 +198,13 @@ class HPIImporter(GenericImporter):
             if not hasattr(rtype, 'getHackedMemberTypes'):
                 logger.error("%s is not a valid relation type" % rtype_id)
         
-        image_scale = 200
+        image_scale = self.available_models.get(self.model, {}).get('image_size')
         def get_scaled_image(t):
             """Return the image at the appropriate scale for the selected model.
             """
- 
+            print('timestamp',t)
             original = bytes(self.controller.package.imagecache.get(t))
-
+            #image_scale = False
             if image_scale:
                 im = Image.open(BytesIO(original))
                 im = im.resize((image_scale, image_scale))
@@ -343,10 +322,9 @@ class HPIImporter(GenericImporter):
 
             bin_threshold = 5
             colors_to_return = 5
-            #create a dataframe, sorted descending by count
             bins_sorted = sorted(list(zip(list(bins_norm.values()),list(bins_norm.keys()))),reverse=True)
             bin_threshold = 5 #in percent
-            # colors_to_return = 5  #no clue right how to implement this
+            # colors_to_return = 5  #no clue to implement this right how 
             bins_sieved_dict={}
             for value,color in bins_sorted:
                 if value > bin_threshold/100:
@@ -359,13 +337,11 @@ class HPIImporter(GenericImporter):
             'media_filename': self.controller.get_default_media(),
             'annotations': []}
 
-        progress = .2
-        #step = .8 / (len(output) or 1)
-
         for anno in self.source_type.annotations:
             frame_list=[cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.begin),dtype='uint8'),1).reshape(image_scale,image_scale,3),
-                        cv2.imdecode(np.fromstring(get_scaled_image((anno.fragment.begin+a.fragment.end)/2),dtype='uint8'),1).reshape(image_scale,image_scale,3),
+                        cv2.imdecode(np.fromstring(get_scaled_image(round((anno.fragment.begin+anno.fragment.end)/2)),dtype='uint8'),1).reshape(image_scale,image_scale,3),
                         cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.end),dtype='uint8'),1).reshape(image_scale,image_scale,3)]
+            print('fragment_length: ',round((anno.fragment.end-anno.fragment.begin)/1000))
 #            for ts in range(a.fragment.end):
 #                if ts>a.fragment.begin and ts%8==0:
 #                   timestamps.append(cv2.imdecode(np.fromstring(get_scaled_image(ts),dtype='uint8'),1).reshape(image_scale,image_scale,3))
@@ -375,6 +351,12 @@ class HPIImporter(GenericImporter):
                             'dominant_colors': extract_dominant_colors(frame_list,'rgb','full')}
             response['annotations'].append(annotations)
 
+        output = json.dumps(response)
+        progress = .2
+        step = .8 / (len(output) or 1)
+        self.progress(.2, _("Parsing %d results") % len(output))
+
+        for anno in self.source_type.annotations:
             a = self.package.get_element_by_id(annotations['annotationid'])
 
             an = yield {
@@ -394,6 +376,5 @@ class HPIImporter(GenericImporter):
                 self.package.relations.append(r)
                 self.update_statistics('relation')
             self.progress(progress)
-            #progress += step
-
-        output = json.dumps(response)
+            progress += step
+        print('太好了','\n',output)
