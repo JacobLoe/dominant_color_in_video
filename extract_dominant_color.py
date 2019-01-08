@@ -23,6 +23,8 @@ def read_video_segments(video,start_frame,end_frame,resolution_width,target_colo
     vid = cv2.VideoCapture(video)
     frames=[]
     vid_length=0
+#    height=140
+#    width=160
     with tqdm(total=end_frame-start_frame+1) as pbar: #init the progressbar,with max lenght of the given segment
         while(vid.isOpened()):
             # Capture frame-by-frame
@@ -32,6 +34,7 @@ def read_video_segments(video,start_frame,end_frame,resolution_width,target_colo
             # skip every "skip_frame"
             if vid_length>=start_frame:
                 # resize the video to a different resolution
+#                frame=cv2.resize(frame,(height,width))
                 frame=cv2.resize(frame,resolution)
                 frame=np.array(frame,dtype='uint8')
                 frames.append(frame) #add the individual frames to a list
@@ -297,8 +300,6 @@ if __name__ == "__main__":
         parser.add_argument("--what_to_process",nargs='?',default='segment',help="optional,decide if the dominant colors should be processed per segment or a whole scene, default is segment, switch to scene with 'scene'")
         parser.add_argument("--target_colorspace",nargs='?',default='rgb',help='change the colorspace of the video, for now only supports HSV and cie-lab')
         args=parser.parse_args()
-        ##############################################
-        ## main
         ##############################################
         azp_path(args.azp_path,args.output_path)
         print('done')
