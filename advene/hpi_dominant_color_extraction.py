@@ -44,10 +44,10 @@ from advene.util.importer import GenericImporter
 
 ################################################################################################################
 def register(controller=None):
-    controller.register_importer(HPIImporter)
+    controller.register_importer(HPIDCImporter)
     return True
 ################################################################################################################
-class HPIImporter(GenericImporter):
+class HPIDCImporter(GenericImporter):
     name = _("HPI dominant color extraction")
     annotation_filter = True
 ################################################################################################################
@@ -152,15 +152,15 @@ class HPIImporter(GenericImporter):
 
 #fixme: if this is uncommented, advene creates the error 'filter not ready. X screenshots missing'. I have not yet found where the error is created.
         # Make sure that we have all appropriate screenshots
-#        missing_screenshots = set()
-#        for a in self.source_type.annotations:
-#            for t in (a.fragment.begin,
-#                      int((a.fragment.begin + a.fragment.end) / 2),
-#                      a.fragment.end):
-#                if self.controller.get_snapshot(annotation=a, position=t).is_default:
-#                    missing_screenshots.add(t)
-#        if len(missing_screenshots) > 0:
-#            unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),3 * len(self.source_type.annotations)))
+        missing_screenshots = set()
+        for a in self.source_type.annotations:
+            for t in (a.fragment.begin,
+                      int((a.fragment.begin + a.fragment.end) / 2),
+                      a.fragment.end):
+                if self.controller.get_snapshot(annotation=a, position=t).is_default:
+                    missing_screenshots.add(t)
+        if len(missing_screenshots) > 0:
+            unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),3 * len(self.source_type.annotations)))
         return unmet_requirements
 ################################################################################################################
     def iterator(self):
@@ -204,17 +204,13 @@ class HPIImporter(GenericImporter):
             """
             print('timestamp',t)
             original = bytes(self.controller.package.imagecache.get(t))
+            im = Image.open(BytesIO(original))
+            im.save('/tmp/{0}.png'.format(t), 'PNG')
             #image_scale = False
             if image_scale:
-                im = Image.open(BytesIO(original))
                 im = im.resize((image_scale, image_scale))
-                buf = BytesIO()
-                im.save(buf, 'PNG')
-                scaled = buf.getvalue()
-                buf.close()
-            else:
-                scaled = original
-            return scaled
+            pixbuf = np.asarray(im, dtype='uint8')[:,:,:3]
+            return pixbuf
 
         def fn_rgb_to_color(target_colorspace,path):
             if (path != 'full'):
@@ -338,13 +334,17 @@ class HPIImporter(GenericImporter):
             'annotations': []}
 
         for anno in self.source_type.annotations:
-            frame_list=[cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.begin),dtype='uint8'),1).reshape(image_scale,image_scale,3),
-                        cv2.imdecode(np.fromstring(get_scaled_image(round((anno.fragment.begin+anno.fragment.end)/2)),dtype='uint8'),1).reshape(image_scale,image_scale,3),
-                        cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.end),dtype='uint8'),1).reshape(image_scale,image_scale,3)]
-            print('fragment_length: ',round((anno.fragment.end-anno.fragment.begin)/1000))
-#            for ts in range(a.fragment.end):
-#                if ts>a.fragment.begin and ts%8==0:
-#                   timestamps.append(cv2.imdecode(np.fromstring(get_scaled_image(ts),dtype='uint8'),1).reshape(image_scale,image_scale,3))
+#            frame_list=[cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.begin),dtype='uint8'),1).reshape(image_scale,image_scale,3),
+#                        cv2.imdecode(np.fromstring(get_scaled_image(round((anno.fragment.begin+anno.fragment.end)/2)),dtype='uint8'),1).reshape(image_scale,image_scale,3),
+#                        cv2.imdecode(np.fromstring(get_scaled_image(anno.fragment.end),dtype='uint8'),1).reshape(image_scale,image_scale,3)]
+#            print('fragment_length: ',round((anno.fragment.end-anno.fragment.begin)/1000))
+            frame_list = []
+            for ts in (anno.fragment.begin,
+                                  int((anno.fragment.begin + anno.fragment.end) / 2),
+                                  anno.fragment.end):
+#            for ts in range(anno.fragment.begin, anno.fragment.end):
+#                if ts%1000==0:
+                   frame_list.append(get_scaled_image(ts))
             annotations = { 'annotationid': anno.id,
                             'begin': anno.fragment.begin,
                             'end': anno.fragment.end,
@@ -377,4 +377,4 @@ class HPIImporter(GenericImporter):
                 self.update_statistics('relation')
             self.progress(progress)
             progress += step
-        print('太好了','\n',output)
+        print('output','\n',output)
