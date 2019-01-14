@@ -44,10 +44,10 @@ from advene.util.importer import GenericImporter
 
 ################################################################################################################
 def register(controller=None):
-    controller.register_importer(HPIDCImporter)
+    controller.register_importer(HPIImporter)
     return True
 ################################################################################################################
-class HPIDCImporter(GenericImporter):
+class HPIImporter(GenericImporter):
     name = _("HPI dominant color extraction")
     annotation_filter = True
 ################################################################################################################
@@ -82,8 +82,7 @@ class HPIDCImporter(GenericImporter):
         self.min_bin_threshold=5.0
         self.max_bin_threshold=60.0
         self.colorspace='cie-lab'
-        self.colors_used='None'
-        self.image_timestamp_divider=16384 #16384 results in roughly 30 images per annotation
+        self.colors_used='red'
         #################################
         self.model = "standard"
         self.confidence = 0.0
@@ -122,7 +121,7 @@ class HPIDCImporter(GenericImporter):
         self.optionparser.add_option(
             "-e","--colors_used",action="store",type="string",
             dest="colors_used",
-            help=_("defines the colors that are used for the color extraction, format is color1,color2,color3 ,colors have to be on the full list, the default value is a list of 40 colors"),
+            help=_("defines the colors that are used for the color extraction, colors not on the full list are discarded, the default value is a list of 40 colors"),
             )
 ################################################################################################################
     @staticmethod
@@ -146,18 +145,16 @@ class HPIDCImporter(GenericImporter):
         met.
         """
         unmet_requirements = []
-        # Make sure that we have all appropriate screenshots
-        missing_screenshots = set()
-        time_len=0
-        for anno in self.source_type.annotations:
-            #create timestamps per annotation 
-            for timestamp in range(anno.fragment.begin,anno.fragment.end):
-                if timestamp%self.image_timestamp_divider==0:
-                   if self.controller.get_snapshot(annotation=anno, position=timestamp).is_default:
-                      missing_screenshots.add(timestamp)
-                   time_len+=1
-        if len(missing_screenshots) > 0:
-            unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),time_len*len(self.source_type.annotations)))
+#        # Make sure that we have all appropriate screenshots
+#        missing_screenshots = set()
+#        for anno in self.source_type.annotations:
+#            for timestamp in (anno.fragment.begin,
+#                      int((anno.fragment.begin + anno.fragment.end) / 2),
+#                      anno.fragment.end):
+#                if self.controller.get_snapshot(annotation=anno, position=timestamp).is_default:
+#                    missing_screenshots.add(timestamp)
+#        if len(missing_screenshots) > 0:
+#            unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),3 * len(self.source_type.annotations)))
         return unmet_requirements
 ################################################################################################################
     def iterator(self):
@@ -195,30 +192,27 @@ class HPIDCImporter(GenericImporter):
         def get_scaled_image(t):
             """Return the image at the appropriate scale for the selected model.
             """
+            print('timestamp',t)
             original = bytes(self.controller.package.imagecache.get(t))
             im = Image.open(BytesIO(original))
             im.save('/tmp/{0}.png'.format(t), 'PNG')
+            #image_scale = False
             if image_scale:
                 im = im.resize((image_scale, image_scale))
             pixbuf = np.asarray(im, dtype='uint8')[:,:,:3]
             return pixbuf
 
-        def fn_rgb_to_color(target_colorspace,colors_used):
-            colors_reference={'darkred':(139,0,0),'firebrick':(178,34,34),'crimson':(220,20,60),'red':(255,0,0),
-                        'tomato':(255,99,71),'salmon':(250,128,114),'darkorange':(255,140,0),'gold':(255,215,0),
-                        'darkkhaki':(189,183,107),'yellow':(255,255,0),'darkolivegreen':(85,107,47),'olivedrab':(107,142,35),
-                        'greenyellow':(173,255,47),'darkgreen':(0,100,0),'aquamarine':(127,255,212),'steelblue':(70,130,180),
-                        'skyblue':(135,206,235),'darkblue':(0,0,139),'blue':(0,0,255),'royalblue':(65,105,225),'purple':(128,0,128),
-                        'violet':(238,130,238),'deeppink':(255,20,147),'pink':(255,192,203),'antiquewhite':(250,235,215),
-                        'saddlebrown':(139,69,19),'sandybrown':(244,164,96),'ivory':(255,255,240),'dimgrey':(105,105,105),
-                        'grey':(28,128,128),'silver':(192,192,192),'lightgrey':(211,211,211),'black':(0,0,0),'white':(255,255,255),
-                        'darkcyan':(0,139,139),'cyan':(0,255,255),'green':(0,128,0),'khaki':(240,230,140),'goldenrod':(218,165,32),
-                        'orange':(255,165,0),'coral':(255,127,80),'magenta':(255,0,255),'wheat':(245,222,179),'skin':(255,224,189),'purple4':(147,112,219)}
-            if (colors_used!='None'):
-                colors={}
-                colors_used=colors_used.split(',')
-                for color in colors_used:
-                    colors[color]=colors_reference[color]
+        def fn_rgb_to_color(target_colorspace,path):
+            if (path != 'full'):
+                colors = {}
+                with open(path) as f:
+                    for line in f:
+                        #split lines at "::
+                        color, rgb = line.strip().split(':')
+                        #strip the rgb-string of the parenthesis, split it up a the commas,
+                        #cast them to int and put them into a tuples
+                        rgb_value=tuple(map(int,(rgb.strip('(').strip(')').split(','))))
+                        colors[color]=rgb_value
             else:
                 colors={'darkred':(139,0,0),
                 'firebrick':(178,34,34),
@@ -268,6 +262,7 @@ class HPIDCImporter(GenericImporter):
 
             colors_aux={}
             if target_colorspace=='HSV':
+                print('HSV')
                 for color in colors:
                     a = np.array((colors[color]),dtype='uint8')
                     b = a.reshape(1,1,3)
@@ -275,6 +270,7 @@ class HPIDCImporter(GenericImporter):
                     colors_aux[color]=tuple(c.reshape(3))
                 colors=colors_aux
             if target_colorspace=='cie-lab':
+                print('cie-lab')
                 for color in colors:
                     a = np.array((colors[color]),dtype='uint8')
                     b = a.reshape(1,1,3)
@@ -290,8 +286,10 @@ class HPIDCImporter(GenericImporter):
             return rgb_to_color
 
 #fixme: use the option parser for bin_threshold, not the hardcoded value
-        def extract_dominant_colors(frame_list,target_colorspace,colors_used):
-            rgb_to_color=fn_rgb_to_color(target_colorspace,colors_used) #get the color dict 
+        def extract_dominant_colors(frame_list,target_colorspace,path):
+            print(str(len(frame_list))+' frames to process.')
+            print('frame_list_shape:', np.mean(frame_list[0]) )
+            rgb_to_color=fn_rgb_to_color(target_colorspace,path) #get the color dict 
             bins={} #bins dict for histograms 
             for rgb in rgb_to_color: #init the dict with zeros for every key
                 bins[rgb_to_color[rgb]]=0
@@ -305,16 +303,18 @@ class HPIDCImporter(GenericImporter):
                 nns = kdt.query(img, k=1, return_distance=False)
                 for nn in nns:
                     bins[rgb_to_color[rgb_list[nn[0]]]]+=1
-            norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
+            norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the binsi
             bins_norm={k:v/norm_factor for k,v in bins.items()}
-
+ 
             bins_sorted = sorted(list(zip(list(bins_norm.values()),list(bins_norm.keys()))),reverse=True)
             bins_sieved_dict={}
             for value,color in bins_sorted:
-                if value > self.min_bin_threshold/100:
-                    bins_sieved_dict[color]=value
-            return bins_sieved_dict
-
+                if value*100 > self.min_bin_threshold: #and value*100 < self.max_bin_threshold:
+                    bins_sieved_dict[color]=value*100
+#            try:
+#                return bins_sieved_dict[:self.colors_to_return]
+#            except:
+                return bins_sieved_dict
 
         response = {
             "model": 'self.model',
@@ -323,42 +323,33 @@ class HPIDCImporter(GenericImporter):
             'annotations': []}
 
         for anno in self.source_type.annotations:
-            frame_list = []
-            for timestamp in range(anno.fragment.begin,anno.fragment.end):
-                if timestamp%self.image_timestamp_divider==0:
-                   frame_list.append(get_scaled_image(timestamp))
+            frame_list=[]
+            for timestamp in (anno.fragment.begin,
+                      int((anno.fragment.begin + anno.fragment.end) / 2),
+                      anno.fragment.end):
+#            for ts in range(anno.fragment.begin, anno.fragment.end):
+#                if ts%1000==0:
+                frame_list.append(get_scaled_image(timestamp))
             annotations = { 'annotationid': anno.id,
                             'begin': anno.fragment.begin,
                             'end': anno.fragment.end,
-                            'dominant_colors': extract_dominant_colors(frame_list,self.colorspace,self.colors_used)}
+                            'dominant_colors': extract_dominant_colors(frame_list,self.colorspace,'full')}
             response['annotations'].append(annotations)
 
         output = json.dumps(response)
-
-        #print('output: ',output)
-
         progress = .2
         step = .8 / (len(output) or 1)
         self.progress(.2, _("Parsing %d results") % len(output))
-        bins={} #bins dict for histograms
-        rgb_to_color=fn_rgb_to_color(self.colorspace,self.colors_used) #get the color dict 
-        for rgb in rgb_to_color: #init the dict with zeros for every key
-            bins[rgb_to_color[rgb]]=0
-        for anno in response['annotations']:
-            for color in anno['dominant_colors']:
-                bins[color]+=1
-            #print('dominant colors: ',anno['dominant_colors'])
-        print('bins: ',bins)
 
-        for anno in response['annotations']:
-#            print('anno: ',anno)
-#            print('type(anno): ',type(anno))
-            a = self.package.get_element_by_id(anno['annotationid'])
+        for anno in self.source_type.annotations:
+            a = self.package.get_element_by_id(annotations['annotationid'])
+
             an = yield {
                 'type': new_atype,
-                'begin': anno['begin'],
-                'end': anno['end'],
-                'content': json.dumps(anno['dominant_colors'])}
+                'begin': anno.fragment.begin,
+                'end': anno.fragment.end,
+                'content': json.dumps(annotations['dominant_colors'])}
+
             if an is not None and self.create_relations:
                 r = self.package.createRelation(
                     ident='_'.join( ('r', a.id, an.id) ),
@@ -371,3 +362,4 @@ class HPIDCImporter(GenericImporter):
                 self.update_statistics('relation')
             self.progress(progress)
             progress += step
+        print('太好了','\n',output)

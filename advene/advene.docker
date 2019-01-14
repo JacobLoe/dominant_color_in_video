@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+
+# uncomment to rebuild
+docker build -t advene:latest .
+
+#docker run -ti --rm  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/snd:/dev/snd --privileged -v /home/christian/dev/AdA/advene:/home/christian/advene -v /home/christian/.advene/:/home/christian/.advene -v /home/christian/dev/AdA/data/:/home/christian/data advene:latest /bin/bash
+
+docker run -ti --rm  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/snd:/dev/snd --privileged -v $SCRIPTPATH/..:/home/jacob/advene -v /home/jacob/AdA/data/:/home/jacob/data advene:latest /bin/bash
