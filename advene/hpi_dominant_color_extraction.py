@@ -24,7 +24,6 @@ import cv2
 import numpy as np
 from sklearn.neighbors import KDTree
 ################################
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -40,8 +39,6 @@ import requests
 import advene.core.config as config
 import advene.util.helper as helper
 from advene.util.importer import GenericImporter
-
-
 ################################################################################################################
 def register(controller=None):
     controller.register_importer(HPIDCImporter)
@@ -146,8 +143,37 @@ class HPIDCImporter(GenericImporter):
         met.
         """
         unmet_requirements = []
+        #######################################################################
+        colors_reference={'darkred':(139,0,0),'firebrick':(178,34,34),'crimson':(220,20,60),'red':(255,0,0),
+                    'tomato':(255,99,71),'salmon':(250,128,114),'darkorange':(255,140,0),'gold':(255,215,0),
+                    'darkkhaki':(189,183,107),'yellow':(255,255,0),'darkolivegreen':(85,107,47),'olivedrab':(107,142,35),
+                    'greenyellow':(173,255,47),'darkgreen':(0,100,0),'aquamarine':(127,255,212),'steelblue':(70,130,180),
+                    'skyblue':(135,206,235),'darkblue':(0,0,139),'blue':(0,0,255),'royalblue':(65,105,225),'purple':(128,0,128),
+                    'violet':(238,130,238),'deeppink':(255,20,147),'pink':(255,192,203),'antiquewhite':(250,235,215),
+                    'saddlebrown':(139,69,19),'sandybrown':(244,164,96),'ivory':(255,255,240),'dimgrey':(105,105,105),
+                    'grey':(28,128,128),'silver':(192,192,192),'lightgrey':(211,211,211),'black':(0,0,0),'white':(255,255,255),
+                    'darkcyan':(0,139,139),'cyan':(0,255,255),'green':(0,128,0),'khaki':(240,230,140),'goldenrod':(218,165,32),
+                    'orange':(255,165,0),'coral':(255,127,80),'magenta':(255,0,255),'wheat':(245,222,179),'skin':(255,224,189),'purple4':(147,112,219)}
+        if (colors_used!=''):
+            colors={}
 
+            colors_used_aux1=colors_used.split(',')
+            colors_used_aux2=colors_used.split(';')
+            if len(colors_used_aux1)>len(colors_used_aux2):
+                colors_used=colors_used_aux1
+            else:
+                colors_used=colors_used_aux2
 
+            wrong_colors=[]
+            for color in colors_used:
+                try:
+                    colors[color]=colors_reference[color]
+                except:
+                    wrong_colors.append(color)
+        
+        if len(wrong_colors) > 0:
+            unmet_requirements.append(_("There are errors in the color list. The wrong colors are: %d") %str(wrong_colors))
+        #######################################################################
         # Make sure that we have all appropriate screenshots
         missing_screenshots = set()
         time_len=0
@@ -221,9 +247,20 @@ class HPIDCImporter(GenericImporter):
                         'orange':(255,165,0),'coral':(255,127,80),'magenta':(255,0,255),'wheat':(245,222,179),'skin':(255,224,189),'purple4':(147,112,219)}
             if (colors_used!=''):
                 colors={}
-                colors_used=colors_used.split(',')
+
+                colors_used_aux1=colors_used.split(',')
+                colors_used_aux2=colors_used.split(';')
+                if len(colors_used_aux1)>len(colors_used_aux2):
+                    colors_used=colors_used_aux1
+                else:
+                    colors_used=colors_used_aux2
+
+                wrong_colors=[]
                 for color in colors_used:
-                    colors[color]=colors_reference[color]
+                    try:
+                        colors[color]=colors_reference[color]
+                    except:
+                        wrong_colors.append(color)
             else:
                 colors={'darkred':(139,0,0),
                 'firebrick':(178,34,34),
@@ -314,7 +351,7 @@ class HPIDCImporter(GenericImporter):
             bins_sorted = sorted(list(zip(list(bins_norm.values()),list(bins_norm.keys()))),reverse=True)
             bins_sieved_dict={}
             for value,color in bins_sorted:
-                if value > self.min_bin_threshold/100:
+                if value > self.min_bin_threshold/100 and value < self.max_bin_threshold/100:
                     bins_sieved_dict[color]=value
             return bins_sieved_dict
 
