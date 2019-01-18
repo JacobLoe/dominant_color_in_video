@@ -82,7 +82,7 @@ class HPIDCImporter(GenericImporter):
         self.min_bin_threshold=5.0
         self.max_bin_threshold=60.0
         self.colorspace='cie-lab'
-        self.colors_used='None'
+        self.colors_used='darkred,firebrick,crimson,red,tomato,salmon,darkorange,gold,darkkhaki,yellow,darkolivegreen,olivedrab,greenyellow,darkgreen,aquamarine,steelblue,skyblue,darkblue,blue,royalblue,purple,violet,deeppink,pink,antiquewhite,saddlebrown,sandybrown,ivory,dimgrey,grey,silver,lightgrey,black,white,darkcyan,cyan,green,khaki,goldenrod,orange,coral,magenta,wheat,skin,purple4'
         self.image_timestamp_divider=16384 #16384 results in roughly 30 images per annotation
         #################################
         self.model = "standard"
@@ -146,6 +146,8 @@ class HPIDCImporter(GenericImporter):
         met.
         """
         unmet_requirements = []
+
+
         # Make sure that we have all appropriate screenshots
         missing_screenshots = set()
         time_len=0
@@ -204,6 +206,9 @@ class HPIDCImporter(GenericImporter):
             return pixbuf
 
         def fn_rgb_to_color(target_colorspace,colors_used):
+            # rgb-values taken from: https://www.rapidtables.com/web/color/RGB_Color.html
+            #purple4 is taken as median purple
+            #skin is taken as caucasian  
             colors_reference={'darkred':(139,0,0),'firebrick':(178,34,34),'crimson':(220,20,60),'red':(255,0,0),
                         'tomato':(255,99,71),'salmon':(250,128,114),'darkorange':(255,140,0),'gold':(255,215,0),
                         'darkkhaki':(189,183,107),'yellow':(255,255,0),'darkolivegreen':(85,107,47),'olivedrab':(107,142,35),
@@ -214,7 +219,7 @@ class HPIDCImporter(GenericImporter):
                         'grey':(28,128,128),'silver':(192,192,192),'lightgrey':(211,211,211),'black':(0,0,0),'white':(255,255,255),
                         'darkcyan':(0,139,139),'cyan':(0,255,255),'green':(0,128,0),'khaki':(240,230,140),'goldenrod':(218,165,32),
                         'orange':(255,165,0),'coral':(255,127,80),'magenta':(255,0,255),'wheat':(245,222,179),'skin':(255,224,189),'purple4':(147,112,219)}
-            if (colors_used!='None'):
+            if (colors_used!=''):
                 colors={}
                 colors_used=colors_used.split(',')
                 for color in colors_used:
@@ -285,11 +290,9 @@ class HPIDCImporter(GenericImporter):
             rgb_to_color={}
             for color in colors:
                 rgb_to_color[colors[color]]=color
-            #purple4 is median purple
-            #skin is caucasian        
+      
             return rgb_to_color
 
-#fixme: use the option parser for bin_threshold, not the hardcoded value
         def extract_dominant_colors(frame_list,target_colorspace,colors_used):
             rgb_to_color=fn_rgb_to_color(target_colorspace,colors_used) #get the color dict 
             bins={} #bins dict for histograms 
@@ -315,6 +318,9 @@ class HPIDCImporter(GenericImporter):
                     bins_sieved_dict[color]=value
             return bins_sieved_dict
 
+######################################
+# extract the dominant colors
+######################################
 
         response = {
             "model": 'self.model',
@@ -335,24 +341,30 @@ class HPIDCImporter(GenericImporter):
 
         output = json.dumps(response)
 
-        #print('output: ',output)
 
         progress = .2
         step = .8 / (len(output) or 1)
         self.progress(.2, _("Parsing %d results") % len(output))
+
+######################################
+# create histogram of extracted colors
+#########################################
+
+
         bins={} #bins dict for histograms
         rgb_to_color=fn_rgb_to_color(self.colorspace,self.colors_used) #get the color dict 
-        for rgb in rgb_to_color: #init the dict with zeros for every key
+        for rgb in rgb_to_color: #init the histogram-dict with zeros for every key
             bins[rgb_to_color[rgb]]=0
         for anno in response['annotations']:
             for color in anno['dominant_colors']:
                 bins[color]+=1
-            #print('dominant colors: ',anno['dominant_colors'])
         print('bins: ',bins)
 
+################################################
+# write the dominant colors into advene gui
+################################################
+
         for anno in response['annotations']:
-#            print('anno: ',anno)
-#            print('type(anno): ',type(anno))
             a = self.package.get_element_by_id(anno['annotationid'])
             an = yield {
                 'type': new_atype,
