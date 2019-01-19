@@ -107,12 +107,12 @@ class HPIDCImporter(GenericImporter):
             help=_("defines the colorspace that is used by color extractor"),
             )
         self.optionparser.add_option(
-            "-b", "--min_bin_threshold", action="store", type="float",
+            "-b", "--min_color_threshold", action="store", type="float",
             dest="min_bin_threshold", default=self.min_bin_threshold,
             help=_("sets the minimum percentage (0-100) a color has to reach to be returned,default 5.0"),
             )
         self.optionparser.add_option(
-            "-c", "--max_bin_threshold", action="store", type="float",
+            "-c", "--max_color_threshold", action="store", type="float",
             dest="max_bin_threshold", default=self.max_bin_threshold,
             help=_("sets the maximum percentage (0-100) a color can reach before it is not returned,default 60.0"),
             )
@@ -135,7 +135,6 @@ class HPIDCImporter(GenericImporter):
         self.convert(self.iterator())
 ################################################################################################################
     def check_requirements(self):
-        print('unmet_requirements')
         """Check if external requirements for the importers are met.
 
         It returns a list of strings describing the unmet
@@ -143,6 +142,13 @@ class HPIDCImporter(GenericImporter):
         met.
         """
         unmet_requirements = []
+        ########################################################################
+        if self.min_bin_threshold>100:
+           unmet_requirements.append(_("min_color_threshold can't be more than 100"))
+        if self.max_bin_threshold<0:
+           unmet_requirements.append(_("max_color_threshold can't be less than 0"))
+        if self.min_bin_threshold>self.max_bin_threshold:
+           unmet_requirements.append(_("max_color_threshold must be higher than min_color_threshold"))
         #######################################################################
         colors_reference={'darkred':(139,0,0),'firebrick':(178,34,34),'crimson':(220,20,60),'red':(255,0,0),
                     'tomato':(255,99,71),'salmon':(250,128,114),'darkorange':(255,140,0),'gold':(255,215,0),
@@ -159,9 +165,9 @@ class HPIDCImporter(GenericImporter):
 
             colors_used_aux1=colors_used.split(',')
             colors_used_aux2=colors_used.split(';')
-            if len(colors_used_aux1)>len(colors_used_aux2):
+            if len(colors_used_aux1)>len(colors_used_aux2) and len(color_used_aux2==1):
                 colors_used=colors_used_aux1
-            else:
+            elif len(colors_used_aux1)<len(colors_used_aux2) and len(color_used_aux1==1):s
                 colors_used=colors_used_aux2
 
             wrong_colors=[]
@@ -172,7 +178,7 @@ class HPIDCImporter(GenericImporter):
                     wrong_colors.append(color)
         
         if len(wrong_colors) > 0:
-            unmet_requirements.append(_("There are errors in the color list. The wrong colors are: %d") %str(wrong_colors))
+            unmet_requirements.append(_("There are errors in the color list. The wrong colors are: %d") %str(wrong_colors)))
         #######################################################################
         # Make sure that we have all appropriate screenshots
         missing_screenshots = set()
