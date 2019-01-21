@@ -1,0 +1,24 @@
+Das Plugin wird durch rechtsklick auf eine Text-Annotation und dann "HPI dominant color extraction" aufgerufen.
+Es öffnet sich ein Fenster in dem die folgenden Parameter eingestellt werden können. 
+
+offset & source-type-id: Dies sind Advene-spezifische Parameter. Am besten nicht verändern.
+
+colorspace: Bestimmt welcher Farbraum für die Berechnung der dominanten Farben verwendet wird. Es kann zwischen RGB und cieLab gewählt werden. Standarmäßig ist cie-Lab ausgewählt.
+
+min_color_threshold & max_color_threshold: Hiermit wird festgelegt zu wieviel Prozent eine Farbe mindestens in der Szene vorhanden sein muss bzw. maximal vorhanden sein kann um zurückgegeben zu werden.
+	Die Kommazahlen sind erlaubt (Trennzeichen ist . nicht , !!), die Werte müssen zwischen 0 und 100 liegen. min_color_threshold muss kleiner als max_color_threshold sein. 
+	Standarmäßig ist min_color_threshold 5.00 und max_color_threshold 60.00.
+
+colors_used: Bestimmt welche Farben gesucht werden. Farben werden in Kleinbuchstaben mit Komma getrennt eingegeben (red,black,blue). Es kann nur mit Farben gerabeitet werden die dem Plugin bekannt sind.
+Standardmäßig wird mit 40 Farben gearbeitet. Diese sind auch als Standardwerte eingegeben. 
+
+Gestartet wird das Plugin mit Start. Wenn Advene noch nicht alle Frames zur Bearbeitung extrahiert hat erscheint eine Meldung.
+In der wird angezeigt wieviele Frames schon extrahiert wurden und wieviele noch fehlen. Nachdem die Meldung mit OK bestätigt worden ist
+muss erneut Start gedrückt werden. Je nachdem wieviele Frames bearbeitet werden sollen muss dieser Vorgang mehrfach wiederholt werden.
+
+Ebenso erscheinen Fehlermeldungen falls falsche Eingaben in bei den Parametern eingegeben worden sind. Diese können mit OK bestätigt werden.
+Danach muss das Plugin erneut gestartet werden.
+
+Falls keine Meldungen mehr erscheinen, rechnet das Plugin für ein paar Sekunden (abhängig von der Menge der zu annotierenden Frames).
+Wenn dus Plugin fertig ist erscheint eine Meldung die anzeigt wieviele Szenen annotiert wurden.
+In Advene ist nun ein neue Annotationsspur "Concepts for annotation" zu finden, in der die dominanten Farben der einzelnen Szenen hinterlegt sind.
