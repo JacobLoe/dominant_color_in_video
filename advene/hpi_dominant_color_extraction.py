@@ -160,6 +160,8 @@ class HPIDCImporter(GenericImporter):
                     'grey':(28,128,128),'silver':(192,192,192),'lightgrey':(211,211,211),'black':(0,0,0),'white':(255,255,255),
                     'darkcyan':(0,139,139),'cyan':(0,255,255),'green':(0,128,0),'khaki':(240,230,140),'goldenrod':(218,165,32),
                     'orange':(255,165,0),'coral':(255,127,80),'magenta':(255,0,255),'wheat':(245,222,179),'skin':(255,224,189),'purple4':(147,112,219)}
+        colors_used=self.colors_used
+        wrong_colors=[]
         if (colors_used!=''):
             colors={}
 
@@ -170,7 +172,6 @@ class HPIDCImporter(GenericImporter):
             elif len(colors_used_aux1)<len(colors_used_aux2) and len(color_used_aux1==1):s
                 colors_used=colors_used_aux2
 
-            wrong_colors=[]
             for color in colors_used:
                 try:
                     colors[color]=colors_reference[color]
@@ -384,7 +385,6 @@ class HPIDCImporter(GenericImporter):
 
         output = json.dumps(response)
 
-
         progress = .2
         step = .8 / (len(output) or 1)
         self.progress(.2, _("Parsing %d results") % len(output))
@@ -393,7 +393,6 @@ class HPIDCImporter(GenericImporter):
 # create histogram of extracted colors
 #########################################
 
-
         bins={} #bins dict for histograms
         rgb_to_color=fn_rgb_to_color(self.colorspace,self.colors_used) #get the color dict 
         for rgb in rgb_to_color: #init the histogram-dict with zeros for every key
@@ -401,7 +400,7 @@ class HPIDCImporter(GenericImporter):
         for anno in response['annotations']:
             for color in anno['dominant_colors']:
                 bins[color]+=1
-        print('bins: ',bins)
+        #print('bins: ',bins)
 
 ################################################
 # write the dominant colors into advene gui
