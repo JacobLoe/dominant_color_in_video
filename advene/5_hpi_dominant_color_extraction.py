@@ -83,6 +83,11 @@ class HPIDCImporter(GenericImporter):
         self.image_timestamp_divider=16384 #16384 results in roughly 30 images per annotation
         #################################
         self.model = "standard"
+        self.confidence = 0.0
+        self.detected_position = True
+
+        self.create_relations = False
+        self.split_types = False
 
         self.available_models = OrderedDict()
         self.available_models["standard"] = { 'id': "standard",
@@ -138,10 +143,10 @@ class HPIDCImporter(GenericImporter):
         """
         unmet_requirements = []
         ########################################################################
-        if self.min_bin_threshold>100 or self.max_bin_threshold>100:
-           unmet_requirements.append(_("color thresholds can't be more than 100"))
-        if self.min_bin_threshold<0 or self.max_bin_threshold<0:
-           unmet_requirements.append(_("color thresholds can't be negative"))
+        if self.min_bin_threshold>100:
+           unmet_requirements.append(_("min_color_threshold can't be more than 100"))
+        if self.max_bin_threshold<0:
+           unmet_requirements.append(_("max_color_threshold can't be less than 0"))
         if self.min_bin_threshold>self.max_bin_threshold:
            unmet_requirements.append(_("max_color_threshold must be higher than min_color_threshold"))
         #######################################################################
@@ -194,12 +199,32 @@ class HPIDCImporter(GenericImporter):
         """I iterate over the created annotations.
         """
         self.progress(.1, "Sending request to server")
-
-        new_atype = self.ensure_new_type(
+        if self.split_types:
+            # Dict indexed by entity type name
+            new_atypes = {}
+        else:
+            new_atype = self.ensure_new_type(
                 "concept_%s" % self.source_type_id,
                 title = _("Concepts for %s" % (self.source_type_id)))
-        new_atype.mimetype = 'application/json'
-        new_atype.setMetaData(config.data.namespace, "representation",'here/content/parsed/label')
+            new_atype.mimetype = 'application/json'
+            new_atype.setMetaData(config.data.namespace, "representation",
+                                  'here/content/parsed/label')
+        if self.create_relations:
+            schema = self.create_schema('s_concept')
+            rtype_id = 'concept_relation'
+            rtype = self.package.get_element_by_id(rtype_id)
+            if not rtype:
+                # Create a relation type if it does not exist.
+                rtype = schema.createRelationType(ident=rtype_id)
+                rtype.author = config.data.get_userid()
+                rtype.date = self.timestamp
+                rtype.title = "Related concept"
+                rtype.mimetype='text/plain'
+                rtype.setHackedMemberTypes( ('*', '*') )
+                schema.relationTypes.append(rtype)
+                self.update_statistics('relation-type')
+            if not hasattr(rtype, 'getHackedMemberTypes'):
+                logger.error("%s is not a valid relation type" % rtype_id)
         
         image_scale = self.available_models.get(self.model, {}).get('image_size')
         def get_scaled_image(t):
@@ -390,5 +415,15 @@ class HPIDCImporter(GenericImporter):
                 'begin': anno['begin'],
                 'end': anno['end'],
                 'content': json.dumps(anno['dominant_colors'])}
+            if an is not None and self.create_relations:
+                r = self.package.createRelation(
+                    ident='_'.join( ('r', a.id, an.id) ),
+                    type=rtype,
+                    author=config.data.get_userid(),
+                    date=self.timestamp,
+                    members=(a, an))
+                r.title = "Relation between %s and %s" % (a.id, an.id)
+                self.package.relations.append(r)
+                self.update_statistics('relation')
             self.progress(progress)
             progress += step
