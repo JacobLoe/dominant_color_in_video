@@ -193,7 +193,7 @@ class HPIDCImporter(GenericImporter):
         self.source_type = self.controller.package.get_element_by_id(self.source_type_id)
         new_atype = self.ensure_new_type(
                 "concept_%s" % self.source_type_id,
-                title = _("Concepts for %s" % (self.source_type_id)))
+                title = _("Dominant Colors for %s" % (self.source_type_id)))
         new_atype.mimetype = 'application/json'
         new_atype.setMetaData(config.data.namespace, "representation",'here/content/parsed/label')
         
