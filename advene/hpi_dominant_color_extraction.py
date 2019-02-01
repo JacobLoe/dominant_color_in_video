@@ -193,7 +193,7 @@ class HPIDCImporter(GenericImporter):
         self.source_type = self.controller.package.get_element_by_id(self.source_type_id)
         new_atype = self.ensure_new_type(
                 "concept_%s" % self.source_type_id,
-                title = _("Dominant Colors for %s" % (self.source_type_id)))
+                title = _("Concepts for %s" % (self.source_type_id)))
         new_atype.mimetype = 'application/json'
         new_atype.setMetaData(config.data.namespace, "representation",'here/content/parsed/label')
         
@@ -333,7 +333,7 @@ class HPIDCImporter(GenericImporter):
                 for nn in nns:
                     bins[rgb_to_color[rgb_list[nn[0]]]]+=1
 
-            print('np.shape(frame_list): ',np.shape(frame_list))
+            #print('np.shape(frame_list): ',np.shape(frame_list))
             norm_factor = len(frame_list)* np.shape(frame_list[0])[0] * np.shape(frame_list[0])[1] #normalize the bins
             bins_norm={k:v/norm_factor for k,v in bins.items()}
 
@@ -342,7 +342,8 @@ class HPIDCImporter(GenericImporter):
             for value,color in bins_sorted:
                 if value >= self.min_bin_threshold/100 and value <= self.max_bin_threshold/100:
                     bins_sieved_dict[color]=value*100
-            return bins_sieved_dict
+            keys = list(bins_sieved_dict.keys())
+            return keys#bins_sieved_dict
 
 ######################################
 # extract the dominant colors
@@ -354,16 +355,16 @@ class HPIDCImporter(GenericImporter):
             'media_filename': self.controller.get_default_media(),
             'annotations': []}
 
-        print('annotate')
+        #print('annotate')
         for anno in self.source_type.annotations:
             frame_list = []
-            print('anno: ',anno)
-            print('anno.fragment.begin: ',anno.fragment.begin)
-            print('anno.fragment.end: ',anno.fragment.end)
+            #print('anno: ',anno)
+            #print('anno.fragment.begin: ',anno.fragment.begin)
+            #print('anno.fragment.end: ',anno.fragment.end)
             for timestamp in range(anno.fragment.begin,anno.fragment.end):
                 #print('modulo: ',timestamp%self.image_timestamp_divider==0)
                 if timestamp%self.image_timestamp_divider==0:
-                   print('timestamp: ',timestamp)
+                   #print('timestamp: ',timestamp)
                    frame_list.append(get_scaled_image(timestamp))
             annotations = { 'annotationid': anno.id,
                             'begin': anno.fragment.begin,
