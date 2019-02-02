@@ -176,12 +176,17 @@ class HPIDCImporter(GenericImporter):
         time_len=0
         for anno in self.source_type.annotations:
             #create timestamps per annotation 
-            for timestamp in range(anno.fragment.begin,anno.fragment.end):
-                if timestamp%self.image_timestamp_divider==0:
-                   #print('timestamp: ',timestamp)
+            for i,timestamp in enumerate(range(anno.fragment.begin,anno.fragment.end)):
+                if i==0:
+                   if self.controller.get_snapshot(annotation=anno, position=timestamp).is_default:
+                      missing_screenshots.add(timestamp)
+                elif timestamp%self.image_timestamp_divider==0 or timestamp==int((a.fragment.begin + a.fragment.end) / 2):
                    if self.controller.get_snapshot(annotation=anno, position=timestamp).is_default:
                       missing_screenshots.add(timestamp)
                    time_len+=1
+                elif i==len(range(anno.fragment.begin,anno.fragment.end)):
+                   if self.controller.get_snapshot(annotation=anno, position=timestamp).is_default:
+                      missing_screenshots.add(timestamp)
         if len(missing_screenshots) > 0:
             unmet_requirements.append(_("%d / %d screenshots are missing. Wait for extraction to complete.") % (len(missing_screenshots),time_len*len(self.source_type.annotations)))
         return unmet_requirements
@@ -361,10 +366,14 @@ class HPIDCImporter(GenericImporter):
             #print('anno: ',anno)
             #print('anno.fragment.begin: ',anno.fragment.begin)
             #print('anno.fragment.end: ',anno.fragment.end)
-            for timestamp in range(anno.fragment.begin,anno.fragment.end):
+            for i,timestamp in enumerate(range(anno.fragment.begin,anno.fragment.end)):
+                if i==0:
+                   frame_list.append(get_scaled_image(timestamp))
                 #print('modulo: ',timestamp%self.image_timestamp_divider==0)
-                if timestamp%self.image_timestamp_divider==0:
+                elif timestamp%self.image_timestamp_divider==0 or timestamp==int((a.fragment.begin + a.fragment.end) / 2):
                    #print('timestamp: ',timestamp)
+                   frame_list.append(get_scaled_image(timestamp))
+                elif i==len(range(anno.fragment.begin,anno.fragment.end)):
                    frame_list.append(get_scaled_image(timestamp))
             annotations = { 'annotationid': anno.id,
                             'begin': anno.fragment.begin,
