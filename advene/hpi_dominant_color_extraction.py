@@ -180,7 +180,7 @@ class HPIDCImporter(GenericImporter):
                 if i==0:
                    if self.controller.get_snapshot(annotation=anno, position=timestamp).is_default:
                       missing_screenshots.add(timestamp)
-                elif timestamp%self.image_timestamp_divider==0 or timestamp==int((a.fragment.begin + a.fragment.end) / 2):
+                elif timestamp%self.image_timestamp_divider==0 or timestamp==int((anno.fragment.begin + anno.fragment.end) / 2):
                    if self.controller.get_snapshot(annotation=anno, position=timestamp).is_default:
                       missing_screenshots.add(timestamp)
                    time_len+=1
@@ -370,7 +370,7 @@ class HPIDCImporter(GenericImporter):
                 if i==0:
                    frame_list.append(get_scaled_image(timestamp))
                 #print('modulo: ',timestamp%self.image_timestamp_divider==0)
-                elif timestamp%self.image_timestamp_divider==0 or timestamp==int((a.fragment.begin + a.fragment.end) / 2):
+                elif timestamp%self.image_timestamp_divider==0 or timestamp==int((anno.fragment.begin + anno.fragment.end) / 2):
                    #print('timestamp: ',timestamp)
                    frame_list.append(get_scaled_image(timestamp))
                 elif i==len(range(anno.fragment.begin,anno.fragment.end)):
