@@ -348,7 +348,13 @@ class HPIDCImporter(GenericImporter):
                 if value >= self.min_bin_threshold/100 and value <= self.max_bin_threshold/100:
                     bins_sieved_dict[color]=value*100
             keys = list(bins_sieved_dict.keys())
-            return keys#bins_sieved_dict
+            strings=str()
+            for i,color in (keys):
+                if i==len(keys)-1s:
+                   strings+=color
+                else:
+                   strings+=color+','
+            return strings#keys#bins_sieved_dict
 
 ######################################
 # extract the dominant colors
