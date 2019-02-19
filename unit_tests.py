@@ -215,7 +215,7 @@ def test_full_colors_rgb():
 (0, 128, 0): 'green',
 (0, 139, 139): 'darkcyan',
 (0, 255, 255): 'cyan',
-(28, 128, 128): 'grey',
+(128, 128, 128): 'grey',
 (65, 105, 225): 'royalblue',
 (70, 130, 180): 'steelblue',
 (85, 107, 47): 'darkolivegreen',

@@ -231,7 +231,7 @@ class HPIDCImporter(GenericImporter):
                         'skyblue':(135,206,235),'darkblue':(0,0,139),'blue':(0,0,255),'royalblue':(65,105,225),'purple':(128,0,128),
                         'violet':(238,130,238),'deeppink':(255,20,147),'pink':(255,192,203),'antiquewhite':(250,235,215),
                         'saddlebrown':(139,69,19),'sandybrown':(244,164,96),'ivory':(255,255,240),'dimgrey':(105,105,105),
-                        'grey':(28,128,128),'silver':(192,192,192),'lightgrey':(211,211,211),'black':(0,0,0),'white':(255,255,255),
+                        'grey':(128,128,128),'silver':(192,192,192),'lightgrey':(211,211,211),'black':(0,0,0),'white':(255,255,255),
                         'darkcyan':(0,139,139),'cyan':(0,255,255),'green':(0,128,0),'khaki':(240,230,140),'goldenrod':(218,165,32),
                         'orange':(255,165,0),'coral':(255,127,80),'magenta':(255,0,255),'wheat':(245,222,179),'skin':(255,224,189),'purple4':(147,112,219)}
             if (colors_used!=''):

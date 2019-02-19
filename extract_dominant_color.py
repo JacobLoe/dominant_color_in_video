@@ -179,7 +179,7 @@ def fn_rgb_to_color(target_colorspace,path):
         'sandybrown':(244,164,96),
         'ivory':(255,255,240),
         'dimgrey':(105,105,105),
-        'grey':(28,128,128),
+        'grey':(128,128,128),
         'silver':(192,192,192),
         'lightgrey':(211,211,211),
         'black':(0,0,0),
