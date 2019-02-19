@@ -197,9 +197,9 @@ class HPIDCImporter(GenericImporter):
         self.progress(.1, "Sending request to server")
         self.source_type = self.controller.package.get_element_by_id(self.source_type_id)
         new_atype = self.ensure_new_type(
-                "concept_%s" % self.source_type_id,
-                title = _("Concepts for %s" % (self.source_type_id)))
-        new_atype.mimetype = 'application/json'
+                "domcols_%s" % self.source_type_id,
+                title = _("Dominant Colors for %s" % (self.source_type_id)))
+        new_atype.mimetype = 'text/plain'
         new_atype.setMetaData(config.data.namespace, "representation",'here/content/parsed/label')
         
 ############################
@@ -349,12 +349,13 @@ class HPIDCImporter(GenericImporter):
                     bins_sieved_dict[color]=value*100
             keys = list(bins_sieved_dict.keys())
             strings=str()
-            for i,color in (keys):
-                if i==len(keys)-1s:
+            for i,color in enumerate(keys):
+                if i==len(keys)-1:
                    strings+=color
                 else:
                    strings+=color+','
-            return strings#keys#bins_sieved_dict
+            #return strings#keys#bins_sieved_dict
+            return keys
 
 ######################################
 # extract the dominant colors
@@ -415,6 +416,6 @@ class HPIDCImporter(GenericImporter):
                 'type': new_atype,
                 'begin': anno['begin'],
                 'end': anno['end'],
-                'content': json.dumps(anno['dominant_colors'])}
+                'content': ",".join(anno['dominant_colors'])}
             self.progress(progress)
             progress += step
