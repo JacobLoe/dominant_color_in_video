@@ -1,5 +1,6 @@
-Her_bluray_Szene 11_25fps.mp4;black,brown,grey,red,dark_orange;;black,dimgrey,grey
-Her_bluray_Szene 11_25fps.mp4;black,brown,grey,red,dark_orange;grey,black;black,dimgrey,grey
-Her_bluray_Szene 11_25fps.mp4;black,grey,brown,dark_cyan,dark_orange;white,brown,grey,black;black,dimgrey,grey
-Her_bluray_Szene 11_25fps.mp4;grey,brown,black,white,dark_orange;dark_orange,white,black,brown,grey;wheat1,black,orange,salmon,silver
-Her_bluray_Szene 11_25fps.mp4;grey,brown,black,white,dark_orange;black,brown,grey,dark_orange,white;coral,dark_cyan,yellow,olive_drab
+datei;old;new;ground_truth
+lab_reduced_1.png;black,brown,grey,red,dark_orange;;black,dimgrey,grey
+lab_reduced_2.png;black,brown,grey,red,dark_orange;grey,black;black,dimgrey,grey
+lab_reduced_3.png;black,grey,brown,dark_cyan,dark_orange;white,brown,grey,black;black,dimgrey,grey
+lab_reduced_4.png;grey,brown,black,white,dark_orange;dark_orange,white,black,brown,grey;wheat1,black,orange,salmon,silver
+lab_reduced_5.png;grey,brown,black,white,dark_orange;black,brown,grey,dark_orange,white;coral,dark_cyan,yellow,olive_drab
