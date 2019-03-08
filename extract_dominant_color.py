@@ -188,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument("--resolution_width",type=int,nargs='?',default=200,help="optional, set the resolution width of the videofile, the resolution scales automatically to 16:9,default = 200")
     parser.add_argument("--colors_to_return",type=int,nargs='?',default=5, help="optional, set how many colors should be returned at maximum,default = 5")
     parser.add_argument("--colors_txt",nargs='?',default='full', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc',default are a list of 40 colors hardcoded")
-    parser.add_argument("--target_colorspace",nargs='?',default='cie-lab',help='change the colorspace of the video, for now only supports HSV and cie-lab')
+    parser.add_argument("--target_colorspace",nargs='?',default='cie-lab',help='change the colorspace of the video, for now only supports rgb,HSV and cie-lab,default is cie-lab')
     args=parser.parse_args()
     ##############################################
     #extract the .azp-file to /tmp
