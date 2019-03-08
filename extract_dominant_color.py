@@ -29,7 +29,7 @@ def read_video(video,start_frame,end_frame,resolution_width,target_colorspace):
                 break
             if vid_length>=start_frame:
                 frame=cv2.resize(frame,resolution) # resize the video to a different resolution
-                frame=np.array(frame,dtype='float')
+                frame=np.array(frame,dtype='float32')
                 frames.append(frame) #add the individual frames to a list
                 pbar.update(1) #update the progressbar
             if vid_length==end_frame:
@@ -48,7 +48,7 @@ def change_colorspace(frame_list,target_colorspace):
         for frame in frame_list:
             frame=np.array(frame,dtype='uint8')
             frame=cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            frame=np.array(frame,dtype='float')
+            frame=np.array(frame,dtype='float32')
             changed_frame_list.append(frame)
         return changed_frame_list
     if target_colorspace=='cie-lab':
@@ -56,21 +56,19 @@ def change_colorspace(frame_list,target_colorspace):
         for frame in frame_list:
             frame=np.array(frame,dtype='uint8')
             frame=cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
-            frame=np.array(frame,dtype='float')
+            frame=np.array(frame,dtype='float32')
             changed_frame_list.append(frame)
-            break
         return changed_frame_list
     else:
         print('rgb')
         for frame in frame_list:
             frame=np.array(frame,dtype='uint8')
             frame=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame=np.array(frame,dtype='float')
+            frame=np.array(frame,dtype='float32')
             changed_frame_list.append(frame)
         return changed_frame_list
 ##################################################
 def extract_dominant_colors(frame_list,target_colorspace,path,colors_to_return=5):
-    print(str(len(frame_list))+' frames to process.')
     value_to_color=fn_value_to_color(target_colorspace,path) #get the color dict 
 
     bins={} #bins dict for histogram
@@ -173,7 +171,6 @@ def fn_value_to_color(target_colorspace,path):
                     colors_aux[color]=tuple(c.reshape(3))
                 colors_to_value_dict=colors_aux
 
-
             value_to_color={}
             for color in colors_to_value_dict:
                 value_to_color[colors_to_value_dict[color]]=color
@@ -191,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument("--resolution_width",type=int,nargs='?',default=200,help="optional, set the resolution width of the videofile, the resolution scales automatically to 16:9,default = 200")
     parser.add_argument("--colors_to_return",type=int,nargs='?',default=5, help="optional, set how many colors should be returned at maximum,default = 5")
     parser.add_argument("--colors_txt",nargs='?',default='full', help="optional, path to a .txt-file containing colors, the file must be in the format 'black:(0,0,0) new line red:(255,0,0) etc',default are a list of 40 colors hardcoded")
-    parser.add_argument("--target_colorspace",nargs='?',default='rgb',help='change the colorspace of the video, for now only supports HSV and cie-lab')
+    parser.add_argument("--target_colorspace",nargs='?',default='cie-lab',help='change the colorspace of the video, for now only supports HSV and cie-lab')
     args=parser.parse_args()
     ##############################################
     #extract the .azp-file to /tmp
@@ -218,4 +215,3 @@ if __name__ == "__main__":
                                print('timestamp not possible')
                                pass
     file.close()
-    print('done')
