@@ -3,7 +3,7 @@
 #####################################################
 import cv2
 import numpy as np
-import pandas as pd
+#import pandas as pd
 from sklearn.neighbors import KDTree
 import time
 import argparse
@@ -15,27 +15,76 @@ from scipy.spatial.distance import euclidean
 #####################################################
 ## functions
 #####################################################
+
+def get_shots(azp):
+    import zipfile
+    import xmltodict
+    zip_ref = zipfile.ZipFile(azp)
+    inxmlstr = zip_ref.read('content.xml')
+    doc = xmltodict.parse(inxmlstr)
+    shots = []
+    for a in doc['package']['annotations']['annotation']:
+        if a['@type'] == '#shots':
+            begin_ms = int(a['millisecond-fragment']['@begin'])
+            end_ms = int(a['millisecond-fragment']['@end'])
+            shots.append((begin_ms, end_ms))
+
+    return sorted(shots)
+
 #read video file frame by frame, beginning and ending with a timestamp
-def read_video(video,start_frame,end_frame,resolution_width,target_colorspace):
+def read_video(video,start_ms,end_ms,resolution_width,target_colorspace):
     resolution_height=int(round(resolution_width * 9/16))
     resolution=(resolution_width,resolution_height)
     vid = cv2.VideoCapture(video)
     frames=[]
-    vid_length=0
+#    vid_length=0
+    fps = vid.get(cv2.CAP_PROP_FPS)
+
+    start_frame=int((start_ms/1000.0)*fps)
+    end_frame=int((end_ms/1000.0)*fps)-1
+
+    cur_frame = start_frame
     with tqdm(total=end_frame-start_frame+1) as pbar: #init the progressbar,with max length of the given segment
-        while(vid.isOpened()):
-            ret, frame = vid.read() # if ret is false, frame has no content
-            if not ret:
-                break
-            if vid_length>=start_frame:
-                frame=cv2.resize(frame,resolution) # resize the video to a different resolution
-                frame=np.array(frame,dtype='float32')
-                frames.append(frame) #add the individual frames to a list
-                pbar.update(1) #update the progressbar
-            if vid_length==end_frame:
-                pbar.update(1)
-                break
-            vid_length+=1 #increase the vid_length counter
+        if vid.isOpened():
+            vid.set(cv2.CAP_PROP_POS_FRAMES,start_frame)
+            ret, frame = vid.read()
+            cv2.imwrite('{fname}.png'.format(fname=start_frame),frame)
+
+            vid.set(cv2.CAP_PROP_POS_FRAMES,end_frame)
+            ret, frame = vid.read()
+            cv2.imwrite('{fname}.png'.format(fname=end_frame),frame)
+
+            frame=np.array(frame,dtype='float32')
+
+            frames.append(frame)
+            frames.append(frame)
+
+
+#            while cur_frame < vid.get(cv2.CAP_PROP_FRAME_COUNT) and cur_frame < end_frame:
+#                ret = vid.set(cv2.CAP_PROP_POS_FRAMES,cur_frame)
+#                ret, frame = vid.read()
+#
+#                frame=cv2.resize(frame,resolution) # resize the video to a different resolution
+#                frame=np.array(frame,dtype='float32')
+#                frames.append(frame) #add the individual frames to a list
+#                
+#                pbar.update(1) #update the progressbar
+#                cur_frame += 1  
+            
+            
+
+#            ret, frame = vid.read() # if ret is false, frame has no content
+#            if not ret:
+#                break
+#            if vid_length>=start_frame:
+#                frame=cv2.resize(frame,resolution) # resize the video to a different resolution
+#                frame=np.array(frame,dtype='float32')
+#                frames.append(frame) #add the individual frames to a list
+#                pbar.update(1) #update the progressbar
+#            if vid_length==end_frame:
+#                pbar.update(1)
+#                break
+#            vid_length+=1 #increase the vid_length counter
     vid.release()
     cv2.destroyAllWindows()
     frames=change_colorspace(frames,target_colorspace)
@@ -191,6 +240,29 @@ if __name__ == "__main__":
     parser.add_argument("--target_colorspace",nargs='?',default='cie-lab',help='change the colorspace of the video, for now only supports rgb,HSV and cie-lab,default is cie-lab')
     args=parser.parse_args()
     ##############################################
+    
+    shots = get_shots(args.azp_path)
+    
+    # timestamps are milliseconds - convert to frames
+    #fps = 25 # FIXME: this should not be hard-coded - may change depending on video file
+
+    with open(args.output_path,'w') as out:      
+        for i,shot in enumerate(shots):
+            print("Extracting colors for shot={nshot} [{start},{end}]".format(nshot=i,start=shot[0],end=shot[1]))
+            #begin_frame = (shot[0]/1000)*fps
+            begin_ms = shot[0]
+            #end_frame = (shot[1]/1000)*fps
+            end_ms = shot[1]
+
+            frame_list = read_video(args.video_path,begin_ms,end_ms,args.resolution_width,args.target_colorspace)
+            print("Extracted {nframes} frames".format(nframes=len(frame_list)))
+            dominant_colors = extract_dominant_colors(frame_list,args.target_colorspace,args.colors_txt,args.colors_to_return)
+
+            print("{start}, {end}, {colors}".format(start=shot[0],end=shot[1],colors=dominant_colors))
+            out.write("{start} {end} {colors}\n".format(start=shot[0], end=shot[1], colors=dominant_colors)) #write the timestamp and the extracted colors to file
+
+    exit()
+
     #extract the .azp-file to /tmp
     zip_ref = zipfile.ZipFile(args.azp_path)
     zip_ref.extractall('/tmp')
@@ -198,7 +270,7 @@ if __name__ == "__main__":
     tree = ET.parse('/tmp/content.xml')
     root = tree.getroot().findall('./{http://experience.univ-lyon1.fr/advene/ns}annotations')
     #traverse the .xml-file
-    with open(args.output_path,'w') as file:
+    with open(args.output_path,'w') as out:
             for child in root[0].iter():
                 if child.get('type')=='#Shot': #whenever a shot annotation is found, extract the timestamp from the xml
                     for child2 in child:
@@ -210,8 +282,8 @@ if __name__ == "__main__":
                                dominant_colors = extract_dominant_colors(frame_list,args.target_colorspace,args.colors_txt,args.colors_to_return)
 
                                print(str(child2.get('begin')),str(child2.get('end')),dominant_colors)
-                               file.write(str(child2.get('begin'))+' '+str(child2.get('end'))+' '+str(dominant_colors)+'\n') #write the timestamp and the extracted colors to file
+                               out.write(str(child2.get('begin'))+' '+str(child2.get('end'))+' '+str(dominant_colors)+'\n') #write the timestamp and the extracted colors to file
                            except:
                                print('timestamp not possible')
                                pass
-    file.close()
+#    out.close() # not necessary due to with ... statement
